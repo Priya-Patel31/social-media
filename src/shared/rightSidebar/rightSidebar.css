@@ -1,0 +1,51 @@
+.rightSidebar-container{
+    padding: 10% 5%;
+    border-left: 1px solid var(--primary-color);
+    max-height: 88vh;
+    min-height: 88vh;
+    position: sticky;
+    top:12vh;
+    right:0;
+
+}
+.rightSidebar-heading{
+    color:var(--primary-text-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+}
+.rightSidebar-list-items{
+    background-color: var(--background-color-light);
+}
+.avatar{
+    margin: 0 0.5rem 0 0;
+    border:2px solid var(--primary-color)
+}
+.small-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.account-details-container{
+    overflow: hidden;
+}
+.account-name,.account-username{
+    color:var(--primary-text-color); 
+    text-align: left;
+}
+.account-name{
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.account-username{
+    font-size: 0.8rem;
+}
+.follow-btn{
+    background-color: var(--primary-color);
+    color:var(--primary-text-color);
+}
+@media only screen and (max-width:992px){
+ .rightSidebar-container{
+     display: none;
+ }   
+}

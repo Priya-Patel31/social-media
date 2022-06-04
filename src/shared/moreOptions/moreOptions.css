@@ -1,0 +1,20 @@
+.moreOptions-container{
+    position: absolute;
+    left:-2.5rem;
+    z-index:3;
+}
+.moreOptions{
+    border:1px solid var(--grey-color);
+    background-color: var(--background-color-light);
+    color:var(--primary-text-color);
+
+}
+.moreOptions-list-item{
+    padding: 0.4rem 0.8rem;
+}
+.moreOptions-border{
+    border-bottom:1px solid var(--grey-color)
+}
+.moreOptions-list-item:hover{
+    background-color: var(--text-hover-color);
+}
