@@ -1,0 +1,37 @@
+.profile-container {
+  margin: 4%;
+}
+.profile-image-wrapper {
+  background-color: var(--primary-color);
+  height: 8rem;
+  position: relative;
+}
+.profile-details-wrapper {
+  background-color: var(--background-color-light);
+
+  padding-top: 5rem;
+}
+.profile-image {
+  position: absolute;
+  transform: translate(-50%, 50%);
+}
+.profile-name,
+.profile-username,
+.profile-bio {
+  color: var(--primary-text-color);
+}
+.profile-username {
+  letter-spacing: 1px;
+}
+.profile-bio {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.edit-button {
+  padding: 0.4rem 0.8rem;
+  margin: auto !important;
+}
+.profile-footer {
+  margin-top: 1.5rem;
+  padding-bottom: 2rem;
+}

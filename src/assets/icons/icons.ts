@@ -7,7 +7,7 @@ import {
   BsHeartFill,
   BsBookmarkFill,
 } from "react-icons/bs";
-import { MdExplore, MdInsertComment } from "react-icons/md";
+import { MdExplore, MdInsertComment,MdModeEdit } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
 export {
   BiSearch,
@@ -21,4 +21,5 @@ export {
   BiCommentDetail,
   BsBookmarkFill,
   MdInsertComment,
+  MdModeEdit
 };
