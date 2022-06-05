@@ -26,6 +26,10 @@ body {
 .align-center {
   align-items: center;
 }
+
+.justify-around{
+  justify-content: space-around;
+}
 .justify-between {
   justify-content: space-between;
 }
