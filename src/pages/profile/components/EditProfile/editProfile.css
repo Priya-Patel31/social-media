@@ -1,0 +1,35 @@
+.editProfile-container{
+    border:1px solid var(--background-color-light);
+    background-color: var(--secondary-text-color);
+    padding:4%;
+    width:500px;
+    animation: bounce 1s  1  ease-in-out;
+}
+.edit-profile-image-wrapper{
+    position: relative;
+}
+.image-icon{
+    position: absolute;
+    bottom:5px;
+    right:3px;
+    font-size: 1.4rem;
+    color:var(--primary-text-color);
+}
+.text-left{
+    text-align: left;
+}
+.form-group{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 0.4rem 0;
+    padding: 0.3rem 0;
+}
+.form-label{
+    color:var(--primary-text-color);
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+.form-control{
+    padding: 0.5rem 0.5rem ;
+}

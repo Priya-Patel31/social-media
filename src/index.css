@@ -36,9 +36,15 @@ body {
 .button{
   margin: 0;
 }
+.margin-auto{
+  margin: auto;
+}
 .primary-button {
   background-color: var(--primary-color);
   border: 1px solid var(--secondary-text-color);
+}
+.display-block{
+  display: block;
 }
 .flex-wrap{
   flex-wrap: wrap;
@@ -51,6 +57,9 @@ body {
 }
 .font-xxs{
   font-size: 0.9rem;
+}
+.w-100{
+  width: 100%;
 }
 @media only screen and (max-width: 768px) {
   body {
