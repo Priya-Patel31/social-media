@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BsFillPlusCircleFill, HiPlus } from "../../assets/icons/icons";
+import { HiPlus } from "../../assets/icons/icons";
 import { Outlet } from "react-router-dom";
 import "./home.css";
 import "../../shared/leftSidebar/leftSidebar.css"
