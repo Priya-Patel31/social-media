@@ -3,7 +3,7 @@ import "./createPost.css";
 import Picker, { SKIN_TONE_LIGHT } from "emoji-picker-react";
 import Avatar from "../../assets/images/avatar.jpg";
 
-const CreatePost = () => {
+const CreatePost = ({className }:any) => { //To-Do
   const [showEmoji, setShowEmoji] = useState(false);
   const [input, setInput] = useState("");
 
@@ -17,7 +17,7 @@ const CreatePost = () => {
     ref.current.style.height = ref.current.scrollHeight + "px";
   }
   return (
-    <div className="create-post-container flex-row">
+    <div className={`create-post-container flex-row ${className}`}>
       <div className="flex-col justify-between emoji-picker-icon-wrapper">
         <img src={Avatar} alt="profile" className="avatar small-avatar" />
         <button

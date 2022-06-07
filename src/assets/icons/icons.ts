@@ -6,9 +6,13 @@ import {
   BsThreeDots,
   BsHeartFill,
   BsBookmarkFill,
+  BsFillPlusCircleFill
 } from "react-icons/bs";
+import {HiPlus} from "react-icons/hi";
+import {RiImageAddFill} from "react-icons/ri"
 import { MdExplore, MdInsertComment,MdModeEdit } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
+import {IoMdClose} from "react-icons/io"
 export {
   BiSearch,
   AiFillHome,
@@ -21,6 +25,10 @@ export {
   BiCommentDetail,
   BsBookmarkFill,
   MdInsertComment,
-  MdModeEdit
+  MdModeEdit,
+  RiImageAddFill,
+  BsFillPlusCircleFill,
+  HiPlus,
+  IoMdClose
 
 };

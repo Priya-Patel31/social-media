@@ -4,7 +4,16 @@
 }
 .main-container{
     margin: 4%;
-    
+}
+.floating-button-wrapper{
+    display: none;
+    width:2.8rem;
+    height:2.8rem;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+.plus-icon{
+    font-size: 1.4rem;
 }
 @media only screen and (max-width:992px){
     .home-container{
@@ -17,5 +26,16 @@
     }
     .main-container{
         padding-bottom: 5rem;
+    }
+    .floating-button-wrapper{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--primary-text-color);
+        font-size: 2rem;
+        position: fixed;
+        bottom: 5rem;
+        right:2.5rem;
+
     }
 }
