@@ -1,9 +1,11 @@
+
 import React, { useState } from "react";
 import { MdModeEdit } from "../../assets/icons/icons";
 import Avatar from "../../assets/images/avatar.jpg";
 import "./profile.css";
 import "../home/home.css";
 import Post from "../../shared/post/Post";
+
 import EditProfile from "./components/EditProfile/EditProfile";
 import Modal from "../../shared/modals/Modal";
 
@@ -25,7 +27,6 @@ const Profile = () => {
           “If debugging is the process of removing bugs, then programming must
           be the process of putting them in.”
         </p>
-
         <button
           className="button primary-button edit-button flex-row align-center"
           onClick={() => setEditProfile(!editProfile)}
@@ -36,7 +37,6 @@ const Profile = () => {
         <Modal onClick={() =>setEditProfile(false)} show={editProfile} >
             <EditProfile/>
         </Modal>
-        
         <div className="flex-row justify-around align-center color-white profile-footer">
           <p>Followers : 0</p>
           <p>Posts : 2</p>

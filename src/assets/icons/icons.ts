@@ -10,6 +10,7 @@ import {
 } from "react-icons/bs";
 import {HiPlus} from "react-icons/hi";
 import {RiImageAddFill} from "react-icons/ri"
+
 import { MdExplore, MdInsertComment,MdModeEdit } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
 import {IoMdClose} from "react-icons/io"
@@ -30,5 +31,6 @@ export {
   BsFillPlusCircleFill,
   HiPlus,
   IoMdClose
+
 
 };
