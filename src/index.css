@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Monoton&display=swap");
+
 :root {
   --background-color: #0f172a;
   --background-color-light: #1e293b;
@@ -9,9 +10,9 @@
   --grey-color: #99a2af;
   --dark-grey-color: #6b7280;
   --text-red-color:red;
-  --text-hover-color:rgb(42, 57, 83)
-  
- 
+  --text-hover-color:rgb(42, 57, 83);
+  --modal-bg-color:rgba(227, 236, 255, 0.5);
+  --hover-color:#0735a0;
 }
 *{
   padding: 0;
@@ -34,7 +35,8 @@ body {
   justify-content: space-between;
 }
 .button{
-  margin: 0;
+  margin-right:0;
+  margin-bottom: 0;
 }
 .margin-auto{
   margin: auto;
@@ -42,6 +44,16 @@ body {
 .primary-button {
   background-color: var(--primary-color);
   border: 1px solid var(--secondary-text-color);
+}
+.primary-button:disabled{
+  background-color:var(--background-color-light);
+  border:1px solid var(--grey-color);
+  cursor:not-allowed;
+}
+.primary-outline-button:disabled{
+  background-color:var(--background-color-light);
+  border:1px solid var(--grey-color);
+  cursor:not-allowed;
 }
 .display-block{
   display: block;
@@ -55,11 +67,17 @@ body {
 .color-white{
   color:var(--primary-text-color);
 }
+.primary-color{
+  color: var(--primary-color);
+}
 .font-xxs{
   font-size: 0.9rem;
 }
 .w-100{
   width: 100%;
+}
+.link{
+  text-decoration:underline;
 }
 @media only screen and (max-width: 768px) {
   body {

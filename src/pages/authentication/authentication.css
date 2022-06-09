@@ -1,0 +1,97 @@
+.signup-container,
+.signin-container,
+.forgot-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.form-background-image {
+  width: 40%;
+  z-index: -1;
+}
+.blob-top-left {
+  position: fixed;
+  top: -100px;
+  left: -120px;
+}
+.blob-bottom-right {
+  position: fixed;
+  bottom: -100px;
+  right: -100px;
+  transform: rotate(180deg);
+}
+.form-heading {
+  color: var(--primary-color);
+}
+.authentication-details-container {
+  max-width: 53.12rem;
+  width: 100%;
+  border-radius: 1rem;
+  background-color: var(--background-color-light);
+  transition: all 1s ease;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  box-shadow: -3px -3px 5px var(--shadow-color1),
+    3px 3px 5px var(--shadow-color2);
+  z-index: 2;
+}
+.authentication-image-container {
+  width: 50%;
+}
+.authentication-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wrapper {
+  padding-left: 2rem;
+  padding-right: 2rem;
+  align-items: center;
+}
+.form-components-container {
+  flex: 1;
+}
+.signup-form-container {
+  width: 100%;
+}
+.password-field-container,
+.email-field-container {
+  position: relative;
+}
+.password-eye-icon,
+.email-icon {
+  position: absolute;
+  top: 45%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  color: var(--background-color);
+}
+.primary-outline-button{
+  border:1px solid var(--primary-color);
+  background-color: var(--background-color-light);
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+.primary-button:hover {
+  background-color:var(--hover-color);
+  color: var(--primary-text-color);
+  transition: all ease 0.3s;
+}
+.input-field{
+  padding: 0.5rem;
+}
+
+@media only screen and (max-width: 550px) {
+  .authentication-details-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem;
+  }
+  .form-components-container {
+    width: 90%;
+  }
+}

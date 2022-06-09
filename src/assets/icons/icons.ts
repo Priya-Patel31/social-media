@@ -6,14 +6,17 @@ import {
   BsThreeDots,
   BsHeartFill,
   BsBookmarkFill,
-  BsFillPlusCircleFill
+  BsFillPlusCircleFill,
+  BsFillEyeFill,
+  BsFillEyeSlashFill,
+  BsArrowRight,
 } from "react-icons/bs";
-import {HiPlus} from "react-icons/hi";
-import {RiImageAddFill} from "react-icons/ri"
+import { HiPlus } from "react-icons/hi";
+import { RiImageAddFill } from "react-icons/ri";
 
-import { MdExplore, MdInsertComment,MdModeEdit } from "react-icons/md";
-import { FaUserCircle } from "react-icons/fa";
-import {IoMdClose} from "react-icons/io"
+import { MdExplore, MdInsertComment, MdModeEdit } from "react-icons/md";
+import { FaUserCircle, FaEnvelope } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 export {
   BiSearch,
   AiFillHome,
@@ -30,7 +33,10 @@ export {
   RiImageAddFill,
   BsFillPlusCircleFill,
   HiPlus,
-  IoMdClose
-
-
+  IoMdClose,
+  FaEnvelope,
+  BsFillEyeFill,
+  BsFillEyeSlashFill,
+  BsArrowRight,
+ 
 };
