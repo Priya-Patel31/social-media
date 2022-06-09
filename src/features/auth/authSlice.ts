@@ -14,15 +14,7 @@ import {
 import {
   doc,
   setDoc,
-  collection,
-  query,
-  where,
   getDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
 import { Status } from "../../generic.types";
 
