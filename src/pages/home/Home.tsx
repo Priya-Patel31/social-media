@@ -9,6 +9,7 @@ import Modal from "../../shared/modals/Modal";
 import CreatePost from "../../shared/createPost/CreatePost";
 import Navbar from "../../shared/navbar/Navbar";
 
+
 const Home = () => {
   const [showModal, setShowModal] = useState(false);
   return (
@@ -29,6 +30,7 @@ const Home = () => {
           </Modal>
         </div>
         <RightSidebar />
+
       </div>
     </div>
   );
