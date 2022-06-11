@@ -11,11 +11,7 @@ import {
   authResponse,
   authInitialState,
 } from "./auth.types";
-import {
-  doc,
-  setDoc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { Status } from "../../generic.types";
 
 const auth = getAuth(app);
@@ -24,12 +20,16 @@ export const signup = createAsyncThunk<authResponse, signupState>(
   "auth/signup",
   async ({ name, username, email, password }, thunkApi) => {
     const user = await createUserWithEmailAndPassword(auth, email, password);
-    console.log(user);
+    
     const data: authResponse = {
       uid: user.user.uid,
       name,
       username,
       email,
+      followers: [],
+      following: [],
+      posts: [],
+      bookmarks: [],
     };
     await setDoc(doc(db, "users", user.user.uid), data);
     return data;
@@ -38,7 +38,7 @@ export const signup = createAsyncThunk<authResponse, signupState>(
 export const getCurrentUser = createAsyncThunk<authResponse | false>(
   "auth/getCurrentUser",
   async () => {
-    const currentUserId = localStorage.getItem("userId");
+    const currentUserId = localStorage.getItem("uid");
     if (currentUserId) {
       const userRef = await getDoc(doc(db, "users", currentUserId));
       return userRef.data() as authResponse;
@@ -60,6 +60,7 @@ const initialState: authInitialState = {
   user: null,
   signupStatus: "idle",
   signinStatus: "idle",
+
 };
 const authSlice = createSlice({
   name: "auth",
@@ -76,7 +77,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(signup.pending, (state, action) => {
+    builder.addCase(signup.pending, (state) => {
       state.signupStatus = "pending";
     });
     builder.addCase(
@@ -87,10 +88,10 @@ const authSlice = createSlice({
         state.signupStatus = "succeded";
       }
     );
-    builder.addCase(signup.rejected, (state, action) => {
+    builder.addCase(signup.rejected, (state) => {
       state.signupStatus = "failed";
     });
-    builder.addCase(signin.pending, (state, action) => {
+    builder.addCase(signin.pending, (state) => {
       state.signinStatus = "pending";
     });
     builder.addCase(
@@ -107,7 +108,9 @@ const authSlice = createSlice({
     builder.addCase(
       getCurrentUser.fulfilled,
       (state, action: PayloadAction<authResponse | false>) => {
-        if (action.payload) state.user = action.payload;
+        console.log(action.payload)
+        if (action.payload !== false) state.user = action.payload;
+
       }
     );
   },

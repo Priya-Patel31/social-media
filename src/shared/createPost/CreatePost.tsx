@@ -2,14 +2,48 @@ import React, { SyntheticEvent, useState, useRef } from "react";
 import "./createPost.css";
 import Picker, { SKIN_TONE_LIGHT } from "emoji-picker-react";
 import Avatar from "../../assets/images/avatar.jpg";
+import { uploadPost } from "../../features/posts/PostsSlice";
+import { Post } from "../../features/posts/posts.type";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
-const CreatePost = ({className }:any) => { //To-Do
-  const [showEmoji, setShowEmoji] = useState(false);
-  const [input, setInput] = useState("");
+const CreatePost = ({ className }: any) => {
+  //To-Do
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
+  const [input, setInput] = useState<string>("");
 
   const onEmojiClick = (event: SyntheticEvent, emojiObject: any) => {
-
-    setInput(input + emojiObject.emoji)
+    setInput(input + emojiObject.emoji);
+  };
+  const { user } = useAppSelector((state) => {
+    return state.auth;
+  });
+  const { uploadPostStatus ,posts} = useAppSelector((state) => {
+    return state.posts;
+  });
+  const dispatch = useAppDispatch();
+  const createPostHandler = async () => {
+    if(input.length === 0 || uploadPostStatus === "pending"){
+      return 
+    }
+    const postData: Post = {
+      caption: input,
+      username: user?.username ?? "",
+      name: user?.name ?? "",
+      date: Date(),
+      likes: [],
+      comments: [],
+      bookmark: false,
+    };
+    try {
+      const res = await dispatch(uploadPost(postData));
+      unwrapResult(res);
+      toast.success("Posted successfully !!");
+      setInput("");
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
   };
   const ref = useRef<null | any>(null);
   function onInput() {
@@ -52,12 +86,15 @@ const CreatePost = ({className }:any) => { //To-Do
             {250 - input.length}
           </span>
           <button
-            disabled={input.length === 0 && true}
+            disabled={input.length === 0 || uploadPostStatus === "pending"}
             className={`${
-              input.length === 0 ? "disabled-button" : "primary-button"
+              (input.length === 0 || uploadPostStatus === "pending")
+                ? "disabled-button"
+                : "primary-button"
             } button  font-bold`}
+            onClick={createPostHandler}
           >
-            Post
+          {uploadPostStatus === "pending" ? "Posting..." : "Post"}
           </button>
         </div>
       </div>

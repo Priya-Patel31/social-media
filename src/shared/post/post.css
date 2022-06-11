@@ -4,8 +4,12 @@
     margin-top: 2.5rem;
    
 }
-.username{
+.name{
     color:var(--primary-text-color);
+}
+.username{
+    font-size: 0.8rem;
+    color:var(--grey-color)
 }
 .icon{
     cursor: pointer;

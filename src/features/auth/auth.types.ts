@@ -16,6 +16,10 @@ export type authResponse = {
   name: string;
   username: string;
   email: string;
+  posts:string[],
+  followers : string[],
+  following : string[],
+  bookmarks : string[]
 };
 export type authInitialState = {
     user : authResponse | null  ;
