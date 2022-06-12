@@ -6,11 +6,13 @@ import {
   BsHeartFill,
   MdInsertComment,
   BsBookmarkFill,
+  BsHeart,
+  BsBookmark,
 } from "../../assets/icons/icons";
 import "./post.css";
-import { Post as PostType } from "../../features/posts/posts.type";
-import { useAppDispatch } from "../../app/hooks";
-import { likePost } from "../../features/posts/PostsSlice";
+import { Post as PostType } from "../../features/posts/posts.types";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { bookmarkPost, likePost } from "../../features/posts/PostsSlice";
 
 type PostProps = { post: PostType };
 const Post = ({ post }: PostProps) => {
@@ -19,10 +21,21 @@ const Post = ({ post }: PostProps) => {
   const handleMoreOptions = () => {
     setShow(!show);
   };
+  const { likePostStatus, bookmarkStatus } = useAppSelector((state) => {
+    return state.posts;
+  });
+  const uid = localStorage.getItem("uid");
+  const isLiked: boolean = post.likes.some((likeId) => likeId === uid);
+  const isBookmarked: boolean = post.bookmarks?.some(
+    (bookmarkId) => bookmarkId === uid
+  );
+  const handleLikes = () => {
+    dispatch(likePost({ postId: post.id ?? "", isLiked }));
+  };
 
-  const handleLikes = () =>{
-    dispatch(likePost(post.id));
-  }
+  const bookmarkHandler = () => {
+    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
+  };
   return (
     <div className="flex-col post-container">
       <div className="flex-row">
@@ -33,29 +46,43 @@ const Post = ({ post }: PostProps) => {
               <h3 className="name mr-2">{post.name}</h3>
               <span className="username">{post.username}</span>
             </div>
-            <div className="more-options-wrapper">
-              <BsThreeDots
-                className="more-icon"
-                onClick={() => handleMoreOptions()}
-              />
-              {show && <MoreOptions></MoreOptions>}
-            </div>
+            {uid === post.uid && (
+              <div className="more-options-wrapper">
+                <BsThreeDots
+                  className="more-icon"
+                  onClick={() => handleMoreOptions()}
+                />
+                {show && <MoreOptions post={post}></MoreOptions>}
+              </div>
+            )}
           </div>
           <div className="caption-container">{post.caption}</div>
         </div>
       </div>
       <div className="flex-row justify-between color-white icons-container align-center">
         <div className="flex-row align-center">
-          <button onClick={handleLikes}>
-          <BsHeartFill className="icon" />
+          <button
+            onClick={handleLikes}
+            className="postActions"
+            disabled={likePostStatus === "pending"}
+          >
+            {isLiked ? <BsHeartFill /> : <BsHeart />}
           </button>
           <span className="ml-1 font-xxs">{post.likes.length}</span>
         </div>
         <div className="flex-row align-center">
-          <MdInsertComment className="icon" />
-          <span className="ml-1 font-xxs">{post.comments.length}</span>
+          <button className="postActions">
+            <MdInsertComment />
+            <span className="ml-1 font-xxs">{post.comments.length}</span>
+          </button>
         </div>
-        <BsBookmarkFill className="icon" />
+        <button
+          onClick={bookmarkHandler}
+          className="postActions"
+          disabled={bookmarkStatus === "pending"}
+        >
+          {isBookmarked ? <BsBookmarkFill /> : <BsBookmark />}
+        </button>
       </div>
     </div>
   );

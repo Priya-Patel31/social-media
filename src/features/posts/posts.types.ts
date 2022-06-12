@@ -16,12 +16,17 @@ export type Post = {
   date: string;
   likes: string[];
   comments: Comment[];
-  bookmark: boolean;
+  bookmarks: string[];
   uid?: string;
   id?: string;
 };
+export type LikePostParams = { postId: string; isLiked: boolean };
+export type BookmarkParams = { postId: string; isBookmarked: boolean }
 export type PostsInitialState = {
   posts: Post[];
   uploadPostStatus: Status;
   fetchPostsStatus: Status;
+  likePostStatus: Status;
+  bookmarkStatus : Status;
+  deletePostStatus : Status
 };

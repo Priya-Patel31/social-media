@@ -15,7 +15,7 @@ const LeftSidebar = () => {
   return (
     <div>
       <Modal show={showModal} onClick={() => setShowModal(false)}>
-        <CreatePost className="responsive-create-post" />
+        <CreatePost className="responsive-create-post"  />
       </Modal>
       <aside className="leftSidebar-container">
         <ul className="leftSidebar-list-items list-style-none">
