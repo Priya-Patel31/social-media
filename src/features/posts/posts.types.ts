@@ -25,8 +25,8 @@ export type LikePostParams = {
   isLiked: boolean;
   explore?: boolean;
 };
-export type LikePostReturnType = { post: Post; explore: boolean };
-export type BookmarkPostReturnType ={ post : Post  ,explore : boolean}
+export type ActionPostReturnType = { post: Post; explore?: boolean };
+export type DeletePostParams = {postId : string ,explore?: boolean}
 export type BookmarkParams = {
   postId: string;
   isBookmarked: boolean;

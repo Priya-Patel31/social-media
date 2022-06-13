@@ -2,11 +2,17 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../../firebaseApp";
 import {
-  BookmarkPostReturnType,
-  LikePostReturnType,
+  ActionPostReturnType,
+  DeletePostParams,
   Post,
 } from "../posts/posts.types";
-import { likePost, bookmarkPost } from "../posts/PostsSlice";
+import {
+  likePost,
+  bookmarkPost,
+  deletePost,
+  editPost,
+  uploadPost,
+} from "../posts/PostsSlice";
 import { exploreInitialState } from "./explore.types";
 
 const initialState: exploreInitialState = {
@@ -49,7 +55,7 @@ const exploreSlice = createSlice({
     });
     builder.addCase(
       likePost.fulfilled,
-      (state, action: PayloadAction<LikePostReturnType>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
         if (action.payload.explore === false) return;
         const postIndex = state.posts.findIndex((post) => {
           return post.id === action.payload.post.id;
@@ -61,7 +67,7 @@ const exploreSlice = createSlice({
     );
     builder.addCase(
       bookmarkPost.fulfilled,
-      (state, action: PayloadAction<BookmarkPostReturnType>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
         if (!action.payload.explore) {
           return;
         }
@@ -73,8 +79,38 @@ const exploreSlice = createSlice({
         }
       }
     );
+    builder.addCase(
+      deletePost.fulfilled,
+      (state, action: PayloadAction<DeletePostParams>) => {
+        if (!action.payload.explore) {
+          return;
+        }
+        state.posts = state.posts.filter((post) => {
+          return post.id !== action.payload.postId;
+        });
+      }
+    );
+    builder.addCase(
+      editPost.fulfilled,
+      (state, action: PayloadAction<ActionPostReturnType>) => {
+        if (!action.payload.explore) {
+          return;
+        }
+        const postIndex = state.posts.findIndex((post) => {
+          return post.id === action.payload.post.id;
+        });
+        if (postIndex !== -1) {
+          state.posts[postIndex] = action.payload.post;
+        }
+      }
+    );
+    builder.addCase(
+      uploadPost.fulfilled,
+      (state, action: PayloadAction<Post>) => {
+        state.posts.unshift(action.payload);
+      }
+    );
   },
 });
 
 export default exploreSlice.reducer;
-// export const {} = userSlice.actions;

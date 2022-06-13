@@ -13,10 +13,10 @@ import {
 import { db } from "../../firebaseApp";
 import { query, where } from "firebase/firestore";
 import {
+  ActionPostReturnType,
   BookmarkParams,
-  BookmarkPostReturnType,
+  DeletePostParams,
   LikePostParams,
-  LikePostReturnType,
   Post,
   PostsInitialState,
 } from "./posts.types";
@@ -51,7 +51,7 @@ export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
   }
 );
 
-export const likePost = createAsyncThunk<LikePostReturnType, LikePostParams>(
+export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
   async ({ postId, isLiked, explore }) => {
     const uid = localStorage.getItem("uid");
@@ -65,12 +65,12 @@ export const likePost = createAsyncThunk<LikePostReturnType, LikePostParams>(
     return {
       post: { ...updatedPost, id: postRef.id },
       explore,
-    } as LikePostReturnType;
+    } as ActionPostReturnType;
   }
 );
 
 export const bookmarkPost = createAsyncThunk<
-  BookmarkPostReturnType,
+  ActionPostReturnType,
   BookmarkParams
 >("posts/bookmark", async ({ postId, isBookmarked, explore }) => {
   const uid = localStorage.getItem("uid");
@@ -84,23 +84,23 @@ export const bookmarkPost = createAsyncThunk<
   return {
     post: { ...updatedPost, id: postRef.id },
     explore,
-  } as BookmarkPostReturnType;
+  } as ActionPostReturnType;
 });
 
-export const editPost = createAsyncThunk<Post, { post: Post }>(
-  "posts/editPost",
-  async ({ post }) => {
-    const postRef = doc(db, "posts", post.id ?? "");
-    await updateDoc(postRef, { caption: post.caption });
-    return post;
-  }
-);
-export const deletePost = createAsyncThunk<string, string>(
+export const editPost = createAsyncThunk<
+  ActionPostReturnType,
+  { post: Post; explore?: boolean }
+>("posts/editPost", async ({ post, explore }) => {
+  const postRef = doc(db, "posts", post.id ?? "");
+  await updateDoc(postRef, { caption: post.caption });
+  return { post, explore } as ActionPostReturnType;
+});
+export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
   "posts/deletePost",
-  async (postId) => {
+  async ({ postId, explore }) => {
     const postRef = doc(db, "posts", postId ?? "");
     await deleteDoc(postRef);
-    return postId;
+    return { postId, explore } as DeletePostParams;
   }
 );
 const initialState: PostsInitialState = {
@@ -145,7 +145,7 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       likePost.fulfilled,
-      (state, action: PayloadAction<LikePostReturnType>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
         if (action.payload.explore) {
           state.likePostStatus = "succeded";
           return;
@@ -167,7 +167,7 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       bookmarkPost.fulfilled,
-      (state, action: PayloadAction<BookmarkPostReturnType>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
         if (action.payload.explore) {
           state.bookmarkStatus = "succeded";
           return;
@@ -189,12 +189,16 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       editPost.fulfilled,
-      (state, action: PayloadAction<Post>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
+        if (action.payload.explore) {
+          state.uploadPostStatus = "succeded";
+          return;
+        }
         const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.id;
+          return post.id === action.payload.post.id;
         });
         if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload;
+          state.posts[postIndex] = action.payload.post;
           state.uploadPostStatus = "succeded";
         }
       }
@@ -207,9 +211,13 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       deletePost.fulfilled,
-      (state, action: PayloadAction<string>) => {
+      (state, action: PayloadAction<DeletePostParams>) => {
+        if (action.payload.explore) {
+          state.deletePostStatus = "succeded";
+          return;
+        }
         state.posts = state.posts.filter((post) => {
-          return post.id !== action.payload;
+          return post.id !== action.payload.postId;
         });
         state.deletePostStatus = "succeded";
       }
@@ -224,4 +232,4 @@ const postsSlice = createSlice({
 });
 
 export default postsSlice.reducer;
-// export const {} = postsSlice.actions;
+

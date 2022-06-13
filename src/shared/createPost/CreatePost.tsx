@@ -20,6 +20,7 @@ type CreatePostProps = {
   post?: Post | null;
   update?: boolean;
   setShowModal?: Dispatch<SetStateAction<boolean>> | null;
+  explore?: boolean
 };
 const CreatePost = ({
   className,
@@ -27,6 +28,7 @@ const CreatePost = ({
   post = null,
   update = false,
   setShowModal = null,
+  explore 
 }: CreatePostProps) => {
   //To-Do
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
@@ -53,7 +55,7 @@ const CreatePost = ({
     if (post !== null && setShowModal !== null) {
       let updatedPost = { ...post, caption: input };
       try {
-        const res = await dispatch(editPost({ post: updatedPost }));
+        const res = await dispatch(editPost({ post: updatedPost,explore }));
         unwrapResult(res);
         toast.success("Post updated successfully !!");
         setInput("");

@@ -8,16 +8,15 @@ import {
 import SignupImage from "../../../assets/images/signup.svg";
 import { Link, useNavigate } from "react-router-dom";
 import "../authentication.css";
-import { useDispatch } from "react-redux";
 import { signup } from "../../../features/auth/authSlice";
 import { signupState } from "../../../features/auth/auth.types";
-import { AppDispatch } from "../../../app/store";
 import { toast } from "react-toastify";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { useAppDispatch } from "../../../app/hooks";
 
 export const Signup = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<signupState>({
     name: "",
