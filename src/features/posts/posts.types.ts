@@ -20,13 +20,23 @@ export type Post = {
   uid?: string;
   id?: string;
 };
-export type LikePostParams = { postId: string; isLiked: boolean };
-export type BookmarkParams = { postId: string; isBookmarked: boolean }
+export type LikePostParams = {
+  postId: string;
+  isLiked: boolean;
+  explore?: boolean;
+};
+export type LikePostReturnType = { post: Post; explore: boolean };
+export type BookmarkPostReturnType ={ post : Post  ,explore : boolean}
+export type BookmarkParams = {
+  postId: string;
+  isBookmarked: boolean;
+  explore?: boolean;
+};
 export type PostsInitialState = {
   posts: Post[];
   uploadPostStatus: Status;
   fetchPostsStatus: Status;
   likePostStatus: Status;
-  bookmarkStatus : Status;
-  deletePostStatus : Status
+  bookmarkStatus: Status;
+  deletePostStatus: Status;
 };

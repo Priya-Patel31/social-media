@@ -14,7 +14,9 @@ import { db } from "../../firebaseApp";
 import { query, where } from "firebase/firestore";
 import {
   BookmarkParams,
+  BookmarkPostReturnType,
   LikePostParams,
+  LikePostReturnType,
   Post,
   PostsInitialState,
 } from "./posts.types";
@@ -26,18 +28,21 @@ export const uploadPost = createAsyncThunk<any, Post>(
 
     const docId = await addDoc(collection(db, "posts"), { ...postData, uid });
     const post = await (await getDoc(docId)).data();
-    return {...post,id:docId.id};
+    return { ...post, id: docId.id };
   }
 );
 
-export const fetchUserPosts = createAsyncThunk<Post[]>(
+export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
   "posts/fetchUserPost",
-  async () => {
+  async (following) => {
+    console.log(following);
     const posts: Post[] = [];
     const uid: any = localStorage.getItem("uid");
-    const q = query(collection(db, "posts"), where("uid", "in", [uid]));
+    const q = query(
+      collection(db, "posts"),
+      where("uid", "in", [uid, ...following])
+    );
     const Snap = await getDocs(q);
-
     Snap.forEach(async (doc) => {
       const post = (await doc.data()) as Post;
       posts.push({ ...post, id: doc.id });
@@ -46,9 +51,9 @@ export const fetchUserPosts = createAsyncThunk<Post[]>(
   }
 );
 
-export const likePost = createAsyncThunk<Post, LikePostParams>(
+export const likePost = createAsyncThunk<LikePostReturnType, LikePostParams>(
   "posts/likePost",
-  async ({ postId, isLiked }) => {
+  async ({ postId, isLiked, explore }) => {
     const uid = localStorage.getItem("uid");
     const postRef = await doc(db, "posts", postId ?? "");
     if (isLiked) {
@@ -57,24 +62,30 @@ export const likePost = createAsyncThunk<Post, LikePostParams>(
       await updateDoc(postRef, { likes: arrayUnion(uid) });
     }
     const updatedPost = await (await getDoc(postRef)).data();
-    return { ...updatedPost, id: postRef.id } as Post;
+    return {
+      post: { ...updatedPost, id: postRef.id },
+      explore,
+    } as LikePostReturnType;
   }
 );
 
-export const bookmarkPost = createAsyncThunk<Post, BookmarkParams>(
-  "posts/bookmark",
-  async ({ postId, isBookmarked }) => {
-    const uid = localStorage.getItem("uid");
-    const postRef = await doc(db, "posts", postId);
-    if (isBookmarked) {
-      await updateDoc(postRef, { bookmarks: arrayRemove(uid) });
-    } else {
-      await updateDoc(postRef, { bookmarks: arrayUnion(uid) });
-    }
-    const updatedPost = await (await getDoc(postRef)).data();
-    return { ...updatedPost, id: postRef.id } as Post;
+export const bookmarkPost = createAsyncThunk<
+  BookmarkPostReturnType,
+  BookmarkParams
+>("posts/bookmark", async ({ postId, isBookmarked, explore }) => {
+  const uid = localStorage.getItem("uid");
+  const postRef = await doc(db, "posts", postId);
+  if (isBookmarked) {
+    await updateDoc(postRef, { bookmarks: arrayRemove(uid) });
+  } else {
+    await updateDoc(postRef, { bookmarks: arrayUnion(uid) });
   }
-);
+  const updatedPost = await (await getDoc(postRef)).data();
+  return {
+    post: { ...updatedPost, id: postRef.id },
+    explore,
+  } as BookmarkPostReturnType;
+});
 
 export const editPost = createAsyncThunk<Post, { post: Post }>(
   "posts/editPost",
@@ -134,14 +145,18 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       likePost.fulfilled,
-      (state, action: PayloadAction<Post>) => {
+      (state, action: PayloadAction<LikePostReturnType>) => {
+        if (action.payload.explore) {
+          state.likePostStatus = "succeded";
+          return;
+        }
         const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.id;
+          return post.id === action.payload.post.id;
         });
         if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload;
-          state.likePostStatus = "succeded";
+          state.posts[postIndex] = action.payload.post;
         }
+        state.likePostStatus = "succeded";
       }
     );
     builder.addCase(likePost.pending, (state) => {
@@ -152,14 +167,18 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       bookmarkPost.fulfilled,
-      (state, action: PayloadAction<Post>) => {
+      (state, action: PayloadAction<BookmarkPostReturnType>) => {
+        if (action.payload.explore) {
+          state.bookmarkStatus = "succeded";
+          return;
+        }
         const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.id;
+          return post.id === action.payload.post.id;
         });
         if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload;
-          state.bookmarkStatus = "succeded";
+          state.posts[postIndex] = action.payload.post;
         }
+        state.bookmarkStatus = "succeded";
       }
     );
     builder.addCase(bookmarkPost.pending, (state) => {
