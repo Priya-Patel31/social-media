@@ -30,8 +30,8 @@ const RightSidebar = () => {
     if (fetchUsersStatus === "idle" && user?.following) {
       dispatch(fetchUsers(user?.following ?? []));
     }
-  }, [dispatch, fetchUsersStatus,user?.following]);
-  console.log(user?.following);
+  }, [dispatch, fetchUsersStatus, user?.following]);
+
   return (
     <div className="rightSidebar-container">
       <h3 className="rightSidebar-heading">Who to Follow</h3>

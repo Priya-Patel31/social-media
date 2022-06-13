@@ -33,14 +33,12 @@ export const Signup = () => {
 
   const handleOnClick : any = async (e: any) => { //TO-DO
     e.preventDefault();
-    console.log(formData);
     try{
        const res = await dispatch(signup(formData));
        unwrapResult(res);
        toast.success("User successfully registered");
        navigate("/");
     }catch(e : any){
-      console.log(e);
       if(e.code === "auth/email-already-in-use")
       toast.error("email already in use");
       else if(e.code === "auth/weak-password")
