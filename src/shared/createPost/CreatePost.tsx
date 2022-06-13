@@ -20,7 +20,7 @@ type CreatePostProps = {
   post?: Post | null;
   update?: boolean;
   setShowModal?: Dispatch<SetStateAction<boolean>> | null;
-  explore?: boolean
+  explore?: boolean;
 };
 const CreatePost = ({
   className,

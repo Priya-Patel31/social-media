@@ -18,6 +18,7 @@ const Feeds = () => {
       dispatch(fetchUserPosts(user?.following ?? []));
     }
   }, [dispatch, fetchPostsStatus, user?.following]);
+
   return (
     <div>
       <CreatePost />

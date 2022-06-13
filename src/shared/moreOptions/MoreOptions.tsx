@@ -13,12 +13,12 @@ type MoreOptionsProps = {
 
 const MoreOptions = ({ post ,explore}: MoreOptionsProps) => {
   const dispatch = useAppDispatch();
-
   const editHandler = () => {
     setShowModal(!showModal);
   };
   const deletePostHandler = () => {
     dispatch(deletePost({postId: post.id ?? "",explore}));
+
   };
   const [showModal, setShowModal] = useState<boolean>(false);
 

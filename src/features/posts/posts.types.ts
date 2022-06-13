@@ -20,6 +20,7 @@ export type Post = {
   uid?: string;
   id?: string;
 };
+
 export type LikePostParams = {
   postId: string;
   isLiked: boolean;
@@ -32,6 +33,7 @@ export type BookmarkParams = {
   isBookmarked: boolean;
   explore?: boolean;
 };
+
 export type PostsInitialState = {
   posts: Post[];
   uploadPostStatus: Status;
@@ -39,4 +41,5 @@ export type PostsInitialState = {
   likePostStatus: Status;
   bookmarkStatus: Status;
   deletePostStatus: Status;
+
 };

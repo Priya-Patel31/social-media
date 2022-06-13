@@ -101,6 +101,7 @@ export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
     const postRef = doc(db, "posts", postId ?? "");
     await deleteDoc(postRef);
     return { postId, explore } as DeletePostParams;
+
   }
 );
 const initialState: PostsInitialState = {
@@ -199,6 +200,7 @@ const postsSlice = createSlice({
         });
         if (postIndex !== -1) {
           state.posts[postIndex] = action.payload.post;
+
           state.uploadPostStatus = "succeded";
         }
       }
@@ -232,4 +234,5 @@ const postsSlice = createSlice({
 });
 
 export default postsSlice.reducer;
+
 
