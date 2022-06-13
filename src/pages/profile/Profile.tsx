@@ -1,11 +1,8 @@
-
 import React, { useState } from "react";
 import { MdModeEdit } from "../../assets/icons/icons";
 import Avatar from "../../assets/images/avatar.jpg";
 import "./profile.css";
 import "../home/home.css";
-import Post from "../../shared/post/Post";
-
 import EditProfile from "./components/EditProfile/EditProfile";
 import Modal from "../../shared/modals/Modal";
 
@@ -43,8 +40,8 @@ const Profile = () => {
           <p>Following : 3</p>
         </div>
       </div>
-      <Post />
-      <Post />
+      {/* <Post />
+      <Post /> */}
     </div>
   );
 };

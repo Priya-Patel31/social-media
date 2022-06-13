@@ -6,7 +6,7 @@ import {
   BsArrowRight,
 } from "../../../assets/icons/icons";
 import SignupImage from "../../../assets/images/signup.svg";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../authentication.css";
 import { useDispatch } from "react-redux";
 import { signup } from "../../../features/auth/authSlice";
@@ -14,7 +14,6 @@ import { signupState } from "../../../features/auth/auth.types";
 import { AppDispatch } from "../../../app/store";
 import { toast } from "react-toastify";
 import { unwrapResult } from "@reduxjs/toolkit";
-
 
 export const Signup = () => {
   const navigate = useNavigate();
@@ -31,22 +30,20 @@ export const Signup = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleOnClick : any = async (e: any) => { //TO-DO
+  const handleOnClick: any = async (e: any) => {
+    //TO-DO
     e.preventDefault();
-    console.log(formData);
-    try{
-       const res = await dispatch(signup(formData));
-       unwrapResult(res);
-       toast.success("User successfully registered");
-       navigate("/");
-    }catch(e : any){
-      console.log(e);
-      if(e.code === "auth/email-already-in-use")
-      toast.error("email already in use");
-      else if(e.code === "auth/weak-password")
-      toast.error("Password should be alteast 6 char long");
-      else
-      toast.error("Something went wrong");
+    try {
+      const res = await dispatch(signup(formData));
+      unwrapResult(res);
+      toast.success("User successfully registered");
+      navigate("/");
+    } catch (e: any) {
+      if (e.code === "auth/email-already-in-use")
+        toast.error("email already in use");
+      else if (e.code === "auth/weak-password")
+        toast.error("Password should be alteast 6 char long");
+      else toast.error("Something went wrong");
     }
   };
   return (
@@ -60,7 +57,7 @@ export const Signup = () => {
             <h2 className="my-2 form-heading text-sm">Signup</h2>
             <form
               className="signup-form-container flex-col"
-              onSubmit={handleOnClick }
+              onSubmit={handleOnClick}
             >
               <ul>
                 <li className="list-style-none text-xs mb-1">
@@ -103,8 +100,9 @@ export const Signup = () => {
                     <input
                       id="email"
                       className="input-field form-controls"
-                      type="email" value={formData.email}
-                      onChange ={handleOnChange}
+                      type="email"
+                      value={formData.email}
+                      onChange={handleOnChange}
                       placeholder="priya@gmail.com"
                       required
                     />
@@ -117,12 +115,13 @@ export const Signup = () => {
                   </label>
                   <div className="password-field-container mt-1">
                     <input
-                      id="password" value={formData.password}
+                      id="password"
+                      value={formData.password}
                       className="input-field form-controls"
                       type={showPassword ? "text" : "password"}
-                      onChange ={handleOnChange}
+                      onChange={handleOnChange}
                       placeholder="•••••••••"
-                      required 
+                      required
                     />
                     {showPassword ? (
                       <BsFillEyeFill

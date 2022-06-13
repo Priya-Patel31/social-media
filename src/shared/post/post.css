@@ -2,19 +2,18 @@
     border:1px solid var(--grey-color);
     padding: 1rem;
     margin-top: 2.5rem;
-   
 }
-.username{
+.name{
     color:var(--primary-text-color);
 }
-.icon{
-    cursor: pointer;
+.username{
+    font-size: 0.8rem;
+    color:var(--grey-color)
 }
 .more-icon{
     color:var(--primary-color);
     font-size: 1.5rem;
     cursor: pointer;
-
 }
 .more-options-wrapper{
     position: relative;
@@ -30,4 +29,14 @@
 .icons-container{
     font-size: 1.2rem;
     margin-top:1.5rem;
+}
+.postActions{
+    background-color: transparent;
+    border: none;
+    color:var(--primary-text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.postActions:disabled{
+    cursor:not-allowed;  
 }

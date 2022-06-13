@@ -11,14 +11,20 @@ export type signinState = {
   email: string;
   password: string;
 };
-export type authResponse = {
+export type User = {
   uid: string;
   name: string;
   username: string;
   email: string;
+  posts: string[];
+  followers: string[];
+  following: string[];
+  bookmarks: string[];
 };
 export type authInitialState = {
-    user : authResponse | null  ;
-    signupStatus: Status;
-    signinStatus : Status;
-}
+  user: User | null;
+  signupStatus: Status;
+  signinStatus: Status;
+  followUserStatus : Status
+};
+
