@@ -5,7 +5,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+
 import { signupState, signinState, User, authInitialState } from "./auth.types";
+
 import {
   doc,
   setDoc,
@@ -24,6 +26,7 @@ export const signup = createAsyncThunk<User, signupState>(
     const user = await createUserWithEmailAndPassword(auth, email, password);
 
     const data: User = {
+
       uid: user.user.uid,
       name,
       username,
@@ -84,17 +87,21 @@ export const followUser = createAsyncThunk<
   return { uid, userId, follow } as followUserReturnType;
 });
 
+
 const initialState: authInitialState = {
   user: null,
   signupStatus: "idle",
   signinStatus: "idle",
+
   followUserStatus: "idle",
+
 };
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<User>) => {
+
       state.user = action.payload;
     },
     updateSignupStatus: (state, action: PayloadAction<Status>) => {
