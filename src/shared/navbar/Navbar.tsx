@@ -2,8 +2,17 @@ import React from "react";
 import "./navbar.css";
 import Logo from "../../assets/images/Logo.svg";
 import { BiSearch, BsFillSunFill } from "../../assets/icons/icons";
+import { useNavigate } from "react-router";
+import { signOut,getAuth } from "firebase/auth";
+import { app } from "../../firebaseApp";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const auth = getAuth(app);
+  const handleOnLogout = async()=>{
+    await signOut(auth);
+    navigate("/login");
+  }
   return (
     <div className="navbar-container flex-row align-center justify-between flex-wrap">
       <div className="flex-row align-center ">
@@ -15,16 +24,18 @@ const Navbar = () => {
         </h1>
       </div>
       <form action="/action_page.php" className="searchbar-form">
-        <BiSearch className="search-icon" />
+        <BiSearch className="search-icon"/>
         <input
           type="text"
           placeholder="Enter search text..."
           name="search"
-          className="input-field searchbar"
+          className="searchbar"
         />
       </form>
       <div className="flex-row align-center">
-        <button className="button primary-button font-bold">Login</button>
+        <button className="button primary-button font-bold" onClick={handleOnLogout}>
+          Logout
+        </button>
         <BsFillSunFill className="mr-2 theme-icon"  />
       </div>
     </div>
