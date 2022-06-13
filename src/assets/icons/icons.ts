@@ -12,6 +12,7 @@ import {
   BsArrowRight,
   BsHeart,
   BsBookmark
+
 } from "react-icons/bs";
 import { HiPlus } from "react-icons/hi";
 import { RiImageAddFill } from "react-icons/ri";
@@ -42,5 +43,6 @@ export {
   BsArrowRight,
   BsHeart,
   BsBookmark
+
  
 };

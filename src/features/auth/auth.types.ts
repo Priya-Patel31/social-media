@@ -27,3 +27,4 @@ export type authInitialState = {
   signinStatus: Status;
   followUserStatus : Status
 };
+
