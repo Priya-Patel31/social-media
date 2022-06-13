@@ -3,7 +3,6 @@ import { MdModeEdit } from "../../assets/icons/icons";
 import Avatar from "../../assets/images/avatar.jpg";
 import "./profile.css";
 import "../home/home.css";
-import Post from "../../shared/post/Post";
 import EditProfile from "./components/EditProfile/EditProfile";
 import Modal from "../../shared/modals/Modal";
 
