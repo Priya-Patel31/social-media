@@ -5,6 +5,5 @@ type Helper = {
     value : string
 }
 export const isPresent = ({arr,value}: Helper)   =>{
-    return  false;
-
+    return  arr.some((post) => post.id === value);
 }

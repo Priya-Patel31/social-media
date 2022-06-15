@@ -21,6 +21,8 @@ import {
   PostsInitialState,
 } from "./posts.types";
 import { isPresent } from "../../shared/utils/helper";
+import { followUser } from "../auth/authSlice";
+import { followUserReturnType } from "../auth/auth.types";
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -242,6 +244,12 @@ const postsSlice = createSlice({
     builder.addCase(deletePost.rejected, (state) => {
       state.deletePostStatus = "failed";
     });
+    builder.addCase(
+      followUser.fulfilled,
+      (state, action: PayloadAction<followUserReturnType>) => {
+         state.posts.unshift(...action.payload.posts);
+      }
+    );
   },
 });
 

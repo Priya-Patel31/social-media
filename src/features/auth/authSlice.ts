@@ -5,9 +5,14 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-
-import { signupState, signinState, User, authInitialState } from "./auth.types";
-
+import {
+  signupState,
+  signinState,
+  User,
+  authInitialState,
+  followUserReturnType,
+  followUserParams,
+} from "./auth.types";
 import {
   doc,
   setDoc,
@@ -15,8 +20,13 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  collection,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import { Status } from "../../generic.types";
+import { Post } from "../posts/posts.types";
 
 const auth = getAuth(app);
 
@@ -26,7 +36,6 @@ export const signup = createAsyncThunk<User, signupState>(
     const user = await createUserWithEmailAndPassword(auth, email, password);
 
     const data: User = {
-
       uid: user.user.uid,
       name,
       username,
@@ -40,6 +49,17 @@ export const signup = createAsyncThunk<User, signupState>(
     return data;
   }
 );
+export const getPostsByUserId = async (userId: string) => {
+  const q = query(collection(db, "posts"), where("uid", "==", userId));
+  const snapshots = await getDocs(q);
+  const posts: Post[] = [];
+  snapshots.forEach((postRef) => {
+    const post = postRef.data();
+    posts.push({ ...post, id: postRef.id } as Post);
+  });
+  return posts;
+};
+
 export const getCurrentUser = createAsyncThunk<User | false>(
   "auth/getCurrentUser",
   async () => {
@@ -60,15 +80,6 @@ export const signin = createAsyncThunk<User, signinState>(
     return user.data() as User;
   }
 );
-export type followUserParams = {
-  userId: string;
-  follow: boolean;
-};
-export type followUserReturnType = {
-  uid: string;
-  userId: string;
-  follow: boolean;
-};
 
 export const followUser = createAsyncThunk<
   followUserReturnType,
@@ -77,16 +88,17 @@ export const followUser = createAsyncThunk<
   const uid = localStorage.getItem("uid");
   const userRef = doc(db, "users", uid ?? "");
   const followUserRef = doc(db, "users", userId);
+  let posts: Post[] = [];
   if (follow) {
     await updateDoc(userRef, { following: arrayUnion(userId) });
     await updateDoc(followUserRef, { followers: arrayUnion(uid) });
+    posts = await getPostsByUserId(userId);
   } else {
     await updateDoc(userRef, { following: arrayRemove(userId) });
     await updateDoc(followUserRef, { followers: arrayRemove(uid) });
   }
-  return { uid, userId, follow } as followUserReturnType;
+  return { uid, userId, follow, posts } as followUserReturnType;
 });
-
 
 const initialState: authInitialState = {
   user: null,
@@ -94,14 +106,12 @@ const initialState: authInitialState = {
   signinStatus: "idle",
 
   followUserStatus: "idle",
-
 };
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<User>) => {
-
       state.user = action.payload;
     },
     updateSignupStatus: (state, action: PayloadAction<Status>) => {
