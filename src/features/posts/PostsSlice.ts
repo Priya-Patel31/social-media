@@ -20,6 +20,7 @@ import {
   Post,
   PostsInitialState,
 } from "./posts.types";
+import { isPresent } from "../../shared/utils/helper";
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -101,7 +102,6 @@ export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
     const postRef = doc(db, "posts", postId ?? "");
     await deleteDoc(postRef);
     return { postId, explore } as DeletePostParams;
-
   }
 );
 const initialState: PostsInitialState = {
@@ -147,7 +147,10 @@ const postsSlice = createSlice({
     builder.addCase(
       likePost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (action.payload.explore) {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
           state.likePostStatus = "succeded";
           return;
         }
@@ -169,7 +172,10 @@ const postsSlice = createSlice({
     builder.addCase(
       bookmarkPost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (action.payload.explore) {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
           state.bookmarkStatus = "succeded";
           return;
         }
@@ -191,7 +197,10 @@ const postsSlice = createSlice({
     builder.addCase(
       editPost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (action.payload.explore) {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
           state.uploadPostStatus = "succeded";
           return;
         }
@@ -214,7 +223,10 @@ const postsSlice = createSlice({
     builder.addCase(
       deletePost.fulfilled,
       (state, action: PayloadAction<DeletePostParams>) => {
-        if (action.payload.explore) {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.postId ?? "" })
+        ) {
           state.deletePostStatus = "succeded";
           return;
         }
@@ -234,5 +246,3 @@ const postsSlice = createSlice({
 });
 
 export default postsSlice.reducer;
-
-

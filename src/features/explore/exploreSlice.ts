@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../../firebaseApp";
+import { isPresent } from "../../shared/utils/helper";
 import {
   ActionPostReturnType,
   DeletePostParams,
@@ -56,7 +57,11 @@ const exploreSlice = createSlice({
     builder.addCase(
       likePost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (action.payload.explore === false) return;
+        if (
+          action.payload.explore === false &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        )
+          return;
         const postIndex = state.posts.findIndex((post) => {
           return post.id === action.payload.post.id;
         });
@@ -68,7 +73,10 @@ const exploreSlice = createSlice({
     builder.addCase(
       bookmarkPost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (!action.payload.explore) {
+        if (
+          !action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
           return;
         }
         const postIndex = state.posts.findIndex((post) => {
@@ -82,7 +90,10 @@ const exploreSlice = createSlice({
     builder.addCase(
       deletePost.fulfilled,
       (state, action: PayloadAction<DeletePostParams>) => {
-        if (!action.payload.explore) {
+        if (
+          !action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.postId ?? "" })
+        ) {
           return;
         }
         state.posts = state.posts.filter((post) => {
@@ -93,7 +104,10 @@ const exploreSlice = createSlice({
     builder.addCase(
       editPost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (!action.payload.explore) {
+        if (
+          !action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
           return;
         }
         const postIndex = state.posts.findIndex((post) => {
