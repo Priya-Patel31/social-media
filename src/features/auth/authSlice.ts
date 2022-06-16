@@ -26,7 +26,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { Status } from "../../generic.types";
-import { DeletePostParams, Post } from "../posts/posts.types";
+import {Post } from "../posts/posts.types";
 import { bookmarkPost } from "../posts/PostsSlice";
 import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
 

@@ -8,7 +8,6 @@ import {
 } from "../posts/posts.types";
 import {
   likePost,
-  bookmarkPost,
   deletePost,
   editPost,
   uploadPost,
