@@ -17,6 +17,7 @@ export type User = {
   name: string;
   username: string;
   email: string;
+  bio:string;
   posts: string[];
   followers: string[];
   following: string[];

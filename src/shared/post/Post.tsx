@@ -14,8 +14,8 @@ import { Post as PostType } from "../../features/posts/posts.types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { bookmarkPost, likePost } from "../../features/posts/PostsSlice";
 
-type PostProps = { post: PostType; explore?: boolean };
-const Post = ({ post, explore }: PostProps) => {
+type PostProps = { post: PostType };
+const Post = ({ post }: PostProps) => {
   const [show, setShow] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const handleMoreOptions = () => {
@@ -24,17 +24,19 @@ const Post = ({ post, explore }: PostProps) => {
   const { likePostStatus, bookmarkStatus } = useAppSelector((state) => {
     return state.posts;
   });
+  const { user } = useAppSelector((state) => {
+    return state.auth;
+  });
   const uid = localStorage.getItem("uid");
   const isLiked: boolean = post.likes.some((likeId) => likeId === uid);
-  const isBookmarked: boolean = post.bookmarks?.some(
-    (bookmarkId) => bookmarkId === uid
-  );
+  const isBookmarked: boolean =
+    user?.bookmarks?.some((bookmarkId) => bookmarkId === post.id) ?? false;
   const handleLikes = () => {
-    dispatch(likePost({ postId: post.id ?? "", isLiked, explore }));
+    dispatch(likePost({ postId: post.id ?? "", isLiked }));
   };
 
   const bookmarkHandler = () => {
-    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked, explore }));
+    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
   };
   return (
     <div className="flex-col post-container">
@@ -52,9 +54,7 @@ const Post = ({ post, explore }: PostProps) => {
                   className="more-icon"
                   onClick={() => handleMoreOptions()}
                 />
-                {show && (
-                  <MoreOptions post={post} explore={explore}></MoreOptions>
-                )}
+                {show && <MoreOptions post={post}></MoreOptions>}
               </div>
             )}
           </div>

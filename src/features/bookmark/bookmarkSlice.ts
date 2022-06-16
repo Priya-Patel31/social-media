@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseApp";
 import {
   ActionPostReturnType,
@@ -13,29 +13,29 @@ import {
   editPost,
   uploadPost,
 } from "../posts/PostsSlice";
-import { exploreInitialState } from "./explore.types";
+import { bookmarkInitialState, bookmarkPostReturnType } from "./bookmark.types";
 
-const initialState: exploreInitialState = {
+const initialState: bookmarkInitialState = {
   posts: [],
-  fetchPostsStatus: "idle",
+  bookmarkFetchPostsStatus: "idle",
 };
 
-export const fetchPosts = createAsyncThunk<Post[]>(
-  "explore/fetchPosts",
-  async () => {
+export const fetchPosts = createAsyncThunk<Post[], string[]>(
+  "bookmark/fetchPosts",
+  async (postIds) => {
     const fetchedPosts: Post[] = [];
-    const q = query(collection(db, "posts"));
+    const q = query(collection(db, "posts"), where("id", "in", postIds));
     const snapshots = await getDocs(q);
     snapshots.forEach((post) => {
       fetchedPosts.push({ ...post.data(), id: post.id } as Post);
-   
     });
+    console.log(fetchedPosts);
     return fetchedPosts as Post[];
   }
 );
 
-const exploreSlice = createSlice({
-  name: "explore",
+const bookmarkSlice = createSlice({
+  name: "bookmark",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -43,14 +43,14 @@ const exploreSlice = createSlice({
       fetchPosts.fulfilled,
       (state, action: PayloadAction<Post[]>) => {
         state.posts = action.payload;
-        state.fetchPostsStatus = "succeded";
+        state.bookmarkFetchPostsStatus = "succeded";
       }
     );
     builder.addCase(fetchPosts.rejected, (state) => {
-      state.fetchPostsStatus = "failed";
+      state.bookmarkFetchPostsStatus = "failed";
     });
     builder.addCase(fetchPosts.pending, (state) => {
-      state.fetchPostsStatus = "pending";
+      state.bookmarkFetchPostsStatus = "pending";
     });
     builder.addCase(
       likePost.fulfilled,
@@ -63,6 +63,7 @@ const exploreSlice = createSlice({
         }
       }
     );
+
     builder.addCase(
       deletePost.fulfilled,
       (state, action: PayloadAction<DeletePostParams>) => {
@@ -88,7 +89,27 @@ const exploreSlice = createSlice({
         state.posts.unshift(action.payload);
       }
     );
+    builder.addCase(
+      bookmarkPost.fulfilled,
+      (state, action: PayloadAction<bookmarkPostReturnType>) => {
+        console.log(action.payload.isBookmarked);
+        if (action.payload.isBookmarked) {
+        const findIndex = state.posts.findIndex((post)=>{
+        
+          return post.id === action.payload.post.id;
+        })
+        if(findIndex !== -1){
+          state.posts = state.posts.filter((post) =>{
+            return  post.id !== action.payload.post.id; 
+          })
+        
+        }
+        } else {
+         state.posts.unshift(action.payload.post);
+        }
+      }
+    );
   },
 });
 
-export default exploreSlice.reducer;
+export default bookmarkSlice.reducer;

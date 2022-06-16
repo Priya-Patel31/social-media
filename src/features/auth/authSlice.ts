@@ -26,7 +26,9 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { Status } from "../../generic.types";
-import { Post } from "../posts/posts.types";
+import { DeletePostParams, Post } from "../posts/posts.types";
+import { bookmarkPost } from "../posts/PostsSlice";
+import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
 
 const auth = getAuth(app);
 
@@ -40,6 +42,7 @@ export const signup = createAsyncThunk<User, signupState>(
       name,
       username,
       email,
+      bio : "",
       followers: [],
       following: [],
       posts: [],
@@ -66,6 +69,7 @@ export const getCurrentUser = createAsyncThunk<User | false>(
     const currentUserId = localStorage.getItem("uid");
     if (currentUserId) {
       const userRef = await getDoc(doc(db, "users", currentUserId));
+      console.log(userRef.data());
       return userRef.data() as User;
     } else {
       return false;
@@ -104,7 +108,6 @@ const initialState: authInitialState = {
   user: null,
   signupStatus: "idle",
   signinStatus: "idle",
-
   followUserStatus: "idle",
 };
 const authSlice = createSlice({
@@ -141,7 +144,7 @@ const authSlice = createSlice({
       localStorage.setItem("uid", state.user.uid);
       state.signinStatus = "succeded";
     });
-    builder.addCase(signin.rejected, (state, action) => {
+    builder.addCase(signin.rejected, (state) => {
       state.signinStatus = "failed";
     });
     builder.addCase(followUser.pending, (state) => {
@@ -161,6 +164,23 @@ const authSlice = createSlice({
       getCurrentUser.fulfilled,
       (state, action: PayloadAction<User | false>) => {
         if (action.payload !== false) state.user = action.payload;
+      }
+    );
+    builder.addCase(
+      bookmarkPost.fulfilled,
+      (state, action: PayloadAction<bookmarkPostReturnType>) => {
+        if (action.payload.isBookmarked) {
+          const updatedBookmarkPosts =
+            state.user?.bookmarks.filter((bookmark) => {
+              return bookmark !== action.payload.post.id;
+            }) ?? [];
+
+          if (state.user !== null) {
+            state.user.bookmarks = updatedBookmarkPosts;
+          }
+        } else {
+          state.user?.bookmarks.unshift(action.payload.post.id ?? "");
+        }
       }
     );
   },

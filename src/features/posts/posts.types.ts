@@ -24,14 +24,12 @@ export type Post = {
 export type LikePostParams = {
   postId: string;
   isLiked: boolean;
-  explore?: boolean;
 };
-export type ActionPostReturnType = { post: Post; explore?: boolean };
-export type DeletePostParams = {postId : string ,explore?: boolean}
+export type ActionPostReturnType = { post: Post;};
+export type DeletePostParams = {postId : string }
 export type BookmarkParams = {
   postId: string;
   isBookmarked: boolean;
-  explore?: boolean;
 };
 
 export type PostsInitialState = {

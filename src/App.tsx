@@ -7,10 +7,11 @@ import { Signup } from "./pages/authentication/signup/Signup";
 import { Login } from "./pages/authentication/login/Login";
 import { PrivateRoute } from "./shared/privateRoute/PrivateRoute";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { getCurrentUser } from "./features/auth/authSlice";
 import { useAppDispatch } from "./app/hooks";
 import { Explore } from "./pages/explore/Explore";
+import "react-toastify/dist/ReactToastify.css";
+import { Bookmark } from "./pages/bookmark/Bookmark";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -34,6 +35,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Explore />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/bookmark"
+            element={
+              <PrivateRoute>
+                <Bookmark />
               </PrivateRoute>
             }
           />
