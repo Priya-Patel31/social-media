@@ -18,6 +18,8 @@ export type User = {
   username: string;
   email: string;
   bio:string;
+  website:string;
+  imageUrl : string;
   posts: string[];
   followers: string[];
   following: string[];
@@ -27,7 +29,8 @@ export type authInitialState = {
   user: User | null;
   signupStatus: Status;
   signinStatus: Status;
-  followUserStatus : Status
+  followUserStatus : Status;
+  saveProfileStatus :Status
 };
 export type followUserReturnType = {
   uid: string;
