@@ -11,7 +11,6 @@ import {
   bookmarkPost,
   deletePost,
   editPost,
-  uploadPost,
 } from "../posts/PostsSlice";
 import { bookmarkInitialState, bookmarkPostReturnType } from "./bookmark.types";
 
@@ -29,7 +28,6 @@ export const fetchPosts = createAsyncThunk<Post[], string[]>(
     snapshots.forEach((post) => {
       fetchedPosts.push({ ...post.data(), id: post.id } as Post);
     });
-    console.log(fetchedPosts);
     return fetchedPosts as Post[];
   }
 );

@@ -13,7 +13,6 @@ const Feeds = () => {
     return state.auth;
   });
   useEffect(() => {
-    console.log(user?.following);
     if (fetchPostsStatus === "idle" && user?.following) {
       dispatch(fetchUserPosts(user?.following ?? []));
     }

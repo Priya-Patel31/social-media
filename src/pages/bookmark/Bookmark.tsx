@@ -14,7 +14,6 @@ export const Bookmark = () => {
   useEffect(() => {
     if (bookmarkFetchPostsStatus === "idle" && user?.bookmarks) {
       dispatch(fetchPosts(user?.bookmarks ?? []));
-      console.log(user.bookmarks);
     }
   }, [dispatch, bookmarkFetchPostsStatus, user?.bookmarks]);
 

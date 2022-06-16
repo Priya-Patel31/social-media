@@ -45,7 +45,6 @@ const EditProfile = ({ closeModal }: propType) => {
       toast.success("Profile Saved");
       closeModal(false);
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong!!");
     }
   };

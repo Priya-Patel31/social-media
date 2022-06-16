@@ -29,7 +29,6 @@ import { Status } from "../../generic.types";
 import { DeletePostParams, Post } from "../posts/posts.types";
 import { bookmarkPost, deletePost, uploadPost } from "../posts/PostsSlice";
 import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
-import { act } from "react-dom/test-utils";
 import { FormDataType } from "../../pages/profile/components/EditProfile/EditProfile";
 
 const auth = getAuth(app);
@@ -73,7 +72,6 @@ export const getCurrentUser = createAsyncThunk<User | false>(
     const currentUserId = localStorage.getItem("uid");
     if (currentUserId) {
       const userRef = await getDoc(doc(db, "users", currentUserId));
-      console.log(userRef.data());
       return userRef.data() as User;
     } else {
       return false;
