@@ -39,7 +39,6 @@ export const Login = () => {
       navigate("/")
       toast.success("User logged in !!");
     } catch (e: any) {
-      console.log(e);
       if (e.code === "auth/wrong-password") toast.error("Wrong Password !!");
       else if (e.code === "auth/user-not-found") toast.error("User not found !!");
       else if (e.code === "auth/too-many-requests")

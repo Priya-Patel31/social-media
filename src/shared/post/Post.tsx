@@ -44,10 +44,7 @@ const Post = ({ post, explore }: PostProps) => {
         <img src={Avatar} className="avatar small-avatar" alt="profile" />
         <div className="flex-col post-header ml-1">
           <div className="flex-row align-center justify-between">
-            <div className="">
-              <h3 className="name mr-2">{post.name}</h3>
-              <span className="username">{post.username}</span>
-            </div>
+            <h3 className="name mr-2">{post.username}</h3>
             {uid === post.uid && (
               <div className="more-options-wrapper">
                 <BsThreeDots

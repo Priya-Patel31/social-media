@@ -2,8 +2,9 @@
     border:1px solid var(--background-color-light);
     background-color: var(--secondary-text-color);
     padding:4%;
-    width:500px;
+    width:31.2rem;
     animation: bounce 1s  1  ease-in-out;
+    overflow: auto;
 }
 .edit-profile-image-wrapper{
     position: relative;
@@ -32,4 +33,9 @@
 }
 .form-control{
     padding: 0.5rem 0.5rem ;
+}
+@media only screen and (max-width:550px){
+    .editProfile-container{
+        width:80vw;
+    }
 }

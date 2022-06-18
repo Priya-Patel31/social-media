@@ -22,15 +22,17 @@ import {
 } from "./posts.types";
 import { followUser } from "../auth/authSlice";
 import { followUserReturnType } from "../auth/auth.types";
-import { bookmarkPostReturnType } from "../bookmark/bookmark.types"
+import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
   async (postData) => {
     const uid: any = localStorage.getItem("uid");
+    const userRef = await doc(db,"users",uid);
     const docId = await addDoc(collection(db, "posts"), { ...postData, uid });
     await updateDoc(docId, { id: docId.id });
     const post = await (await getDoc(docId)).data();
+    await updateDoc(userRef, { posts : arrayUnion(docId.id)});
     return post;
   }
 );
@@ -100,6 +102,9 @@ export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
   "posts/deletePost",
   async ({ postId }) => {
     const postRef = doc(db, "posts", postId ?? "");
+    const uid = localStorage.getItem("uid");
+    const userRef = doc(db,"users",uid??"");
+    await updateDoc(userRef,{posts: arrayRemove(postId)})
     await deleteDoc(postRef);
     return { postId } as DeletePostParams;
   }
@@ -212,7 +217,6 @@ const postsSlice = createSlice({
       followUser.fulfilled,
       (state, action: PayloadAction<followUserReturnType>) => {
         state.posts.unshift(...action.payload.posts);
-
       }
     );
   },

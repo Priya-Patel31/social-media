@@ -26,9 +26,10 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { Status } from "../../generic.types";
-import {Post } from "../posts/posts.types";
-import { bookmarkPost } from "../posts/PostsSlice";
+import { DeletePostParams, Post } from "../posts/posts.types";
+import { bookmarkPost, deletePost, uploadPost } from "../posts/PostsSlice";
 import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
+import { FormDataType } from "../../pages/profile/components/EditProfile/EditProfile";
 
 const auth = getAuth(app);
 
@@ -42,7 +43,9 @@ export const signup = createAsyncThunk<User, signupState>(
       name,
       username,
       email,
-      bio : "",
+      bio: "",
+      website: "",
+      imageUrl: "",
       followers: [],
       following: [],
       posts: [],
@@ -104,11 +107,28 @@ export const followUser = createAsyncThunk<
   return { uid, userId, follow, posts } as followUserReturnType;
 });
 
+export const saveUser = createAsyncThunk<FormDataType, FormDataType>(
+  "auth/saveUser",
+  async (formData) => {
+    const uid = localStorage.getItem("uid");
+    const userRef = doc(db, "users", uid ?? "");
+    await updateDoc(userRef, {
+      name: formData.name,
+      bio: formData.bio,
+      website: formData.website,
+      imageUrl: formData.image_url,
+    });
+    return formData;
+  }
+);
+
 const initialState: authInitialState = {
   user: null,
   signupStatus: "idle",
   signinStatus: "idle",
   followUserStatus: "idle",
+  saveProfileStatus: "idle",
+
 };
 const authSlice = createSlice({
   name: "auth",
@@ -183,6 +203,40 @@ const authSlice = createSlice({
         }
       }
     );
+    builder.addCase(
+      uploadPost.fulfilled,
+      (state, action: PayloadAction<Post>) => {
+        if (action.payload.id) state.user?.posts.push(action.payload.id);
+      }
+    );
+    builder.addCase(
+      deletePost.fulfilled,
+      (state, action: PayloadAction<DeletePostParams>) => {
+        if (state.user !== null) {
+          state.user.posts = state.user?.posts.filter((postId) => {
+            return postId !== action.payload.postId;
+          });
+        }
+      }
+    );
+    builder.addCase(saveUser.pending, (state) => {
+      state.saveProfileStatus = "pending";
+    });
+    builder.addCase(
+      saveUser.fulfilled,
+      (state, action: PayloadAction<FormDataType>) => {
+        if (state.user) {
+          state.user.name = action.payload.name;
+          state.user.bio = action.payload.bio;
+          state.user.website = action.payload.website;
+          state.user.name = action.payload.name;
+        }
+        state.saveProfileStatus = "succeded";
+      }
+    );
+    builder.addCase(saveUser.rejected, (state) => {
+      state.saveProfileStatus = "failed";
+    });
   },
 });
 export default authSlice.reducer;

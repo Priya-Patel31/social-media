@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseApp";
+import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
 import {
   ActionPostReturnType,
   DeletePostParams,
@@ -11,16 +12,17 @@ import {
   bookmarkPost,
   deletePost,
   editPost,
+  uploadPost,
 } from "../posts/PostsSlice";
-import { bookmarkInitialState, bookmarkPostReturnType } from "./bookmark.types";
+import { profileInitialState } from "./profile.types";
 
-const initialState: bookmarkInitialState = {
+const initialState: profileInitialState = {
   posts: [],
-  bookmarkFetchPostsStatus: "idle",
+  fetchProfilePostsStatus: "idle",
 };
 
 export const fetchPosts = createAsyncThunk<Post[], string[]>(
-  "bookmark/fetchPosts",
+  "profile/fetchPosts",
   async (postIds) => {
     const fetchedPosts: Post[] = [];
     const q = query(collection(db, "posts"), where("id", "in", postIds));
@@ -32,8 +34,8 @@ export const fetchPosts = createAsyncThunk<Post[], string[]>(
   }
 );
 
-const bookmarkSlice = createSlice({
-  name: "bookmark",
+const profileSlice = createSlice({
+  name: "profile",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -41,14 +43,14 @@ const bookmarkSlice = createSlice({
       fetchPosts.fulfilled,
       (state, action: PayloadAction<Post[]>) => {
         state.posts = action.payload;
-        state.bookmarkFetchPostsStatus = "succeded";
+        state.fetchProfilePostsStatus = "succeded";
       }
     );
     builder.addCase(fetchPosts.rejected, (state) => {
-      state.bookmarkFetchPostsStatus = "failed";
+      state.fetchProfilePostsStatus = "failed";
     });
     builder.addCase(fetchPosts.pending, (state) => {
-      state.bookmarkFetchPostsStatus = "pending";
+      state.fetchProfilePostsStatus = "pending";
     });
     builder.addCase(
       likePost.fulfilled,
@@ -82,11 +84,16 @@ const bookmarkSlice = createSlice({
       }
     );
     builder.addCase(
+      uploadPost.fulfilled,
+      (state, action: PayloadAction<Post>) => {
+        state.posts.unshift(action.payload);
+      }
+    );
+    builder.addCase(
       bookmarkPost.fulfilled,
       (state, action: PayloadAction<bookmarkPostReturnType>) => {
         if (action.payload.isBookmarked) {
         const findIndex = state.posts.findIndex((post)=>{
-
           return post.id === action.payload.post.id;
         })
         if(findIndex !== -1){
@@ -103,4 +110,4 @@ const bookmarkSlice = createSlice({
   },
 });
 
-export default bookmarkSlice.reducer;
+export default profileSlice.reducer;
