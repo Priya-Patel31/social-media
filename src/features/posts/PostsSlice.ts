@@ -22,7 +22,7 @@ import {
 } from "./posts.types";
 import { followUser } from "../auth/authSlice";
 import { followUserReturnType } from "../auth/auth.types";
-import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
+import { bookmarkPostReturnType } from "../bookmark/bookmark.types"
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -54,7 +54,7 @@ export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
 
 export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
-  async ({ postId, isLiked }) => {
+  async ({ postId, isLiked, explore }) => {
     const uid = localStorage.getItem("uid");
     const postRef = await doc(db, "posts", postId ?? "");
     if (isLiked) {
@@ -212,6 +212,7 @@ const postsSlice = createSlice({
       followUser.fulfilled,
       (state, action: PayloadAction<followUserReturnType>) => {
         state.posts.unshift(...action.payload.posts);
+
       }
     );
   },

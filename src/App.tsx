@@ -12,7 +12,6 @@ import { useAppDispatch } from "./app/hooks";
 import { Explore } from "./pages/explore/Explore";
 import "react-toastify/dist/ReactToastify.css";
 import { Bookmark } from "./pages/bookmark/Bookmark";
-
 function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -46,6 +45,7 @@ function App() {
               </PrivateRoute>
             }
           />
+
           <Route index element={<Feeds />} />
           <Route path="profile" element={<Profile />} />
         </Route>
