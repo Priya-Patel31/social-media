@@ -17,7 +17,7 @@ const MoreOptions = ({ post ,explore}: MoreOptionsProps) => {
     setShowModal(!showModal);
   };
   const deletePostHandler = () => {
-    dispatch(deletePost({postId: post.id ?? "",explore}));
+    dispatch(deletePost({postId: post.id ?? ""}));
 
   };
   const [showModal, setShowModal] = useState<boolean>(false);

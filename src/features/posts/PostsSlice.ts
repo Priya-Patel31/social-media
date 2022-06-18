@@ -20,25 +20,24 @@ import {
   Post,
   PostsInitialState,
 } from "./posts.types";
-import { isPresent } from "../../shared/utils/helper";
 import { followUser } from "../auth/authSlice";
 import { followUserReturnType } from "../auth/auth.types";
+import { bookmarkPostReturnType } from "../bookmark/bookmark.types"
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
   async (postData) => {
     const uid: any = localStorage.getItem("uid");
-
     const docId = await addDoc(collection(db, "posts"), { ...postData, uid });
+    await updateDoc(docId, { id: docId.id });
     const post = await (await getDoc(docId)).data();
-    return { ...post, id: docId.id };
+    return post;
   }
 );
 
 export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
   "posts/fetchUserPost",
   async (following) => {
-    console.log(following);
     const posts: Post[] = [];
     const uid: any = localStorage.getItem("uid");
     const q = query(
@@ -46,9 +45,8 @@ export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
       where("uid", "in", [uid, ...following])
     );
     const Snap = await getDocs(q);
-    Snap.forEach(async (doc) => {
-      const post = (await doc.data()) as Post;
-      posts.push({ ...post, id: doc.id });
+    Snap.forEach(async (post) => {
+      posts.push(post.data() as Post);
     });
     return posts;
   }
@@ -66,44 +64,44 @@ export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
     }
     const updatedPost = await (await getDoc(postRef)).data();
     return {
-      post: { ...updatedPost, id: postRef.id },
-      explore,
+      post: updatedPost ,
     } as ActionPostReturnType;
   }
 );
 
 export const bookmarkPost = createAsyncThunk<
-  ActionPostReturnType,
+  bookmarkPostReturnType,
   BookmarkParams
->("posts/bookmark", async ({ postId, isBookmarked, explore }) => {
+>("posts/bookmark", async ({ postId, isBookmarked }) => {
   const uid = localStorage.getItem("uid");
-  const postRef = await doc(db, "posts", postId);
+  const userRef = await doc(db, "users", uid ?? "");
   if (isBookmarked) {
-    await updateDoc(postRef, { bookmarks: arrayRemove(uid) });
+    await updateDoc(userRef, { bookmarks: arrayRemove(postId) });
   } else {
-    await updateDoc(postRef, { bookmarks: arrayUnion(uid) });
+    await updateDoc(userRef, { bookmarks: arrayUnion(postId) });
   }
-  const updatedPost = await (await getDoc(postRef)).data();
+const postRef = await getDoc(doc(db,"posts",postId));
+
   return {
-    post: { ...updatedPost, id: postRef.id },
-    explore,
-  } as ActionPostReturnType;
+    post: postRef.data(),
+    isBookmarked,
+  } as bookmarkPostReturnType;
 });
 
-export const editPost = createAsyncThunk<
-  ActionPostReturnType,
-  { post: Post; explore?: boolean }
->("posts/editPost", async ({ post, explore }) => {
-  const postRef = doc(db, "posts", post.id ?? "");
-  await updateDoc(postRef, { caption: post.caption });
-  return { post, explore } as ActionPostReturnType;
-});
+export const editPost = createAsyncThunk<ActionPostReturnType, { post: Post }>(
+  "posts/editPost",
+  async ({ post }) => {
+    const postRef = doc(db, "posts", post.id ?? "");
+    await updateDoc(postRef, { caption: post.caption });
+    return { post } as ActionPostReturnType;
+  }
+);
 export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
   "posts/deletePost",
-  async ({ postId, explore }) => {
+  async ({ postId }) => {
     const postRef = doc(db, "posts", postId ?? "");
     await deleteDoc(postRef);
-    return { postId, explore } as DeletePostParams;
+    return { postId } as DeletePostParams;
   }
 );
 const initialState: PostsInitialState = {
@@ -149,13 +147,6 @@ const postsSlice = createSlice({
     builder.addCase(
       likePost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (
-          action.payload.explore &&
-          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
-        ) {
-          state.likePostStatus = "succeded";
-          return;
-        }
         const postIndex = state.posts.findIndex((post) => {
           return post.id === action.payload.post.id;
         });
@@ -173,20 +164,7 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       bookmarkPost.fulfilled,
-      (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (
-          action.payload.explore &&
-          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
-        ) {
-          state.bookmarkStatus = "succeded";
-          return;
-        }
-        const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.post.id;
-        });
-        if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload.post;
-        }
+      (state, action: PayloadAction<bookmarkPostReturnType>) => {
         state.bookmarkStatus = "succeded";
       }
     );
@@ -199,13 +177,6 @@ const postsSlice = createSlice({
     builder.addCase(
       editPost.fulfilled,
       (state, action: PayloadAction<ActionPostReturnType>) => {
-        if (
-          action.payload.explore &&
-          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
-        ) {
-          state.uploadPostStatus = "succeded";
-          return;
-        }
         const postIndex = state.posts.findIndex((post) => {
           return post.id === action.payload.post.id;
         });
@@ -225,13 +196,6 @@ const postsSlice = createSlice({
     builder.addCase(
       deletePost.fulfilled,
       (state, action: PayloadAction<DeletePostParams>) => {
-        if (
-          action.payload.explore &&
-          !isPresent({ arr: state.posts, value: action.payload.postId ?? "" })
-        ) {
-          state.deletePostStatus = "succeded";
-          return;
-        }
         state.posts = state.posts.filter((post) => {
           return post.id !== action.payload.postId;
         });
@@ -247,7 +211,8 @@ const postsSlice = createSlice({
     builder.addCase(
       followUser.fulfilled,
       (state, action: PayloadAction<followUserReturnType>) => {
-         state.posts.unshift(...action.payload.posts);
+        state.posts.unshift(...action.payload.posts);
+
       }
     );
   },

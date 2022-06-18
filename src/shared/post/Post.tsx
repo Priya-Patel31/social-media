@@ -24,11 +24,13 @@ const Post = ({ post, explore }: PostProps) => {
   const { likePostStatus, bookmarkStatus } = useAppSelector((state) => {
     return state.posts;
   });
+  const { user } = useAppSelector((state) => {
+    return state.auth;
+  });
   const uid = localStorage.getItem("uid");
   const isLiked: boolean = post.likes.some((likeId) => likeId === uid);
-  const isBookmarked: boolean = post.bookmarks?.some(
-    (bookmarkId) => bookmarkId === uid
-  );
+  const isBookmarked: boolean =
+    user?.bookmarks?.some((bookmarkId) => bookmarkId === post.id) ?? false;
   const handleLikes = () => {
     dispatch(likePost({ postId: post.id ?? "", isLiked, explore }));
   };

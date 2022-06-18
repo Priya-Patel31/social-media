@@ -1,9 +1,9 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
 import exploreReducer from "../features/explore/exploreSlice";
-
 import postsReducer from "../features/posts/PostsSlice";
 import usersReducer from "../features/users/usersSlice";
+import bookmarkReducer from "../features/bookmark/bookmarkSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +11,7 @@ export const store = configureStore({
     posts: postsReducer,
     users: usersReducer,
     explore: exploreReducer,
+    bookmark : bookmarkReducer
   },
 });
 

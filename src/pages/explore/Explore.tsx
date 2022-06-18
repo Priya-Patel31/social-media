@@ -18,7 +18,7 @@ export const Explore = () => {
   return (
     <div>
       {posts.map((post) => {
-        return <Post key={post.id} post={post} explore={true}/>;
+        return <Post key={post.id} post={post}/>;
       })}
     </div>
   );
