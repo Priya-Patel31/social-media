@@ -16,6 +16,7 @@ import {
   ActionPostReturnType,
   BookmarkParams,
   Comment,
+
   DeletePostParams,
   LikePostParams,
   Post,
@@ -58,7 +59,7 @@ export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
 
 export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
-  async ({ postId, isLiked }) => {
+  async ({ postId, isLiked, explore }) => {
     const uid = localStorage.getItem("uid");
     const postRef = await doc(db, "posts", postId ?? "");
     if (isLiked) {
@@ -84,6 +85,7 @@ export const bookmarkPost = createAsyncThunk<
   } else {
     await updateDoc(userRef, { bookmarks: arrayUnion(postId) });
   }
+
   const postRef = await getDoc(doc(db, "posts", postId));
 
   return {
