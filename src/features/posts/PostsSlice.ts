@@ -15,9 +15,12 @@ import { query, where } from "firebase/firestore";
 import {
   ActionPostReturnType,
   BookmarkParams,
+  Comment,
+
   DeletePostParams,
   LikePostParams,
   Post,
+  PostCommentParams,
   PostsInitialState,
 } from "./posts.types";
 import { followUser } from "../auth/authSlice";
@@ -28,11 +31,11 @@ export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
   async (postData) => {
     const uid: any = localStorage.getItem("uid");
-    const userRef = await doc(db,"users",uid);
+    const userRef = await doc(db, "users", uid);
     const docId = await addDoc(collection(db, "posts"), { ...postData, uid });
     await updateDoc(docId, { id: docId.id });
     const post = await (await getDoc(docId)).data();
-    await updateDoc(userRef, { posts : arrayUnion(docId.id)});
+    await updateDoc(userRef, { posts: arrayUnion(docId.id) });
     return post;
   }
 );
@@ -66,7 +69,7 @@ export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
     }
     const updatedPost = await (await getDoc(postRef)).data();
     return {
-      post: updatedPost ,
+      post: updatedPost,
     } as ActionPostReturnType;
   }
 );
@@ -82,7 +85,8 @@ export const bookmarkPost = createAsyncThunk<
   } else {
     await updateDoc(userRef, { bookmarks: arrayUnion(postId) });
   }
-const postRef = await getDoc(doc(db,"posts",postId));
+
+  const postRef = await getDoc(doc(db, "posts", postId));
 
   return {
     post: postRef.data(),
@@ -103,12 +107,30 @@ export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
   async ({ postId }) => {
     const postRef = doc(db, "posts", postId ?? "");
     const uid = localStorage.getItem("uid");
-    const userRef = doc(db,"users",uid??"");
-    await updateDoc(userRef,{posts: arrayRemove(postId)})
+    const userRef = doc(db, "users", uid ?? "");
+    await updateDoc(userRef, { posts: arrayRemove(postId) });
     await deleteDoc(postRef);
     return { postId } as DeletePostParams;
   }
 );
+export const postComment = createAsyncThunk<Comment, PostCommentParams>(
+  "posts/comment",
+  async ({ postId, comment }) => {
+    const postRef = doc(db, "posts", postId);
+    await updateDoc(postRef, { comments: arrayUnion(comment) });
+    return comment;
+  }
+);
+
+export const getCommentsByPostId = createAsyncThunk<Comment[], string>(
+  "posts/getComments",
+  async (postId) => {
+    const postRef = doc(db, "posts", postId);
+    const comments = (await (await getDoc(postRef)).data()) as Comment[];
+    return comments as Comment[];
+  }
+);
+
 const initialState: PostsInitialState = {
   posts: [],
   uploadPostStatus: "idle",
@@ -116,6 +138,7 @@ const initialState: PostsInitialState = {
   likePostStatus: "idle",
   bookmarkStatus: "idle",
   deletePostStatus: "idle",
+  postCommentStatus: "idle",
 };
 
 const postsSlice = createSlice({

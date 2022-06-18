@@ -12,6 +12,7 @@ import { useAppDispatch } from "./app/hooks";
 import { Explore } from "./pages/explore/Explore";
 import "react-toastify/dist/ReactToastify.css";
 import { Bookmark } from "./pages/bookmark/Bookmark";
+import Comments from "./shared/comments/Comments";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -43,6 +44,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Bookmark />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="comments/:postId"
+            element={
+              <PrivateRoute>
+                <Comments />
               </PrivateRoute>
             }
           />
