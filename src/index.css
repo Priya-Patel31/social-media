@@ -83,12 +83,6 @@ body {
 .link{
   text-decoration:underline;
 }
-.empty-posts{
-  color:var(--primary-text-color);
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
 
 @media only screen and (max-width: 768px) {
   body {

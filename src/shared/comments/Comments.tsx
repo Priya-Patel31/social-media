@@ -1,121 +1,100 @@
-
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React from "react";
 import Avatar from "../../assets/images/avatar.jpg";
-import { Comment, Post as PostType } from "../../features/posts/posts.types";
-import { AiOutlineLeft } from "../../assets/icons/icons";
-import "./comments.css";
-import Post from "../post/Post";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import MoreOptions from "../moreOptions/MoreOptions";
 import {
-  getCommentsByPostId,
-  postComment,
-} from "../../features/posts/PostsSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
+  BsThreeDots,
+  BsHeartFill,
+  MdInsertComment,
+  BsBookmarkFill,
+  BsHeart,
+  BsBookmark,
+} from "../../assets/icons/icons";
+import "./post.css";
+import { Post as PostType } from "../../features/posts/posts.types";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { bookmarkPost, likePost } from "../../features/posts/PostsSlice";
 
 const Comments = () => {
-  const { post }: { post: PostType } = useLocation().state as {
-    post: PostType;
-  };
-  const { user } = useAppSelector((state) => {
-    return state.auth;
-  });
   const dispatch = useAppDispatch();
-  const [input, setInput] = useState<string>("");
-  const [comments, setComments] = useState<Comment[]>(post?.comments ?? []);
-  const navigate = useNavigate();
-  useEffect(() => {
-    async function getComments() {
-      try {
-        const res = (await dispatch(getCommentsByPostId(post.id ?? ""))) as any;
-        unwrapResult(res);
-        setComments(res.payload.comments);
-      } catch (e) {
-        toast.error("Failed to fetch comments");
-      }
-    }
-    if (post.id) {
-      getComments();
-    }
-  }, [dispatch, post.id]);
-  const handleReply = async () => {
-    try {
-      const uid = localStorage.getItem("uid");
-      const comment = {
-        comment: input,
-        commentId: Date.now().toString(),
-        uid: uid ?? "",
-        username: user?.username ?? "",
-        replies: [],
-        imageUrl: user?.imageUrl ?? "",
-      };
-      const res = await dispatch(
-        postComment({
-          comment,
-          postId: post.id ?? "",
-        })
-      );
-      unwrapResult(res);
-      setComments([comment, ...comments]);
-      setInput("");
-      toast.success("Comment posted successfully !!");
-    } catch (e) {
-      toast.error("Something went wrong");
-    }
+  const handleLikes = () => {
+    // dispatch(likePost({ postId: post.id ?? "", isLiked, explore }));
   };
+
+  const bookmarkHandler = () => {
+    // dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked, explore }));
+  };
+  const uid = localStorage.getItem("uid");
   return (
-    <div>
-      <button
-        className="button primary-button go-back-btn"
-        onClick={() => navigate(-1)}
-      >
-        <AiOutlineLeft />
-        Go Back{" "}
-      </button>
-      <Post post={{ ...post, comments }}>
-        <div className="comment-container">
-          <div className="flex-col mt-2">
-            <div className="flex-row">
-              <img className="avatar small-avatar" src={Avatar} alt="avatar" />
-              <div className="flex-col input-text-wrapper">
-                <input
-                  className="text-input"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  type="text"
-                  placeholder="Enter your reply"
-                />
-                <div>
-                  <button
-                    className="button primary-button reply-btn"
-                    onClick={handleReply}
-                  >
-                    Reply
-                  </button>
-                </div>
-              </div>
+    <div className="flex-col post-container">
+      <div className="flex-row">
+        <img src={Avatar} className="avatar small-avatar" alt="profile" />
+        <div className="flex-col post-header ml-1">
+          <div className="flex-row align-center justify-between">
+            <div className="">
+              {/* <h3 className="name mr-2">{post.name}</h3>
+              <span className="username">{post.username}</span> */}
             </div>
-            {comments?.map((comment) => {
-              return (
-                <div className="comment-wrapper flex-row">
-                  <div>
-                    <img
-                      src={Avatar}
-                      className="avatar small-avatar"
-                      alt="avatar"
-                    />
-                  </div>
-                  <div className="flex-col">
-                    <h3>{comment.username}</h3>
-                    <p className="mt-1">{comment.comment}</p>
-                  </div>
-                </div>
-              );
-            })}
+            {/* {uid === post.uid && ( */}
+              <div className="more-options-wrapper">
+                <BsThreeDots
+                  className="more-icon"
+                //   onClick={() => handleMoreOptions()}
+                />
+                {/* {show && (
+                  <MoreOptions post={post} explore={explore}></MoreOptions>
+                )} */}
+              </div>
+            {/* )} */}
+          </div>
+          {/* <div className="caption-container">{post.caption}</div> */}
+        </div>
+      </div>
+      <div className="flex-row justify-between color-white icons-container align-center">
+        <div className="flex-row align-center">
+          <button
+            onClick={handleLikes}
+            className="postActions"
+            // disabled={likePostStatus === "pending"}
+          >
+            {/* {isLiked ? <BsHeartFill /> : <BsHeart />} */}
+          </button>
+          {/* <span className="ml-1 font-xxs">{post.likes.length}</span> */}
+        </div>
+        <div className="flex-row align-center">
+          <button className="postActions">
+            <MdInsertComment />
+            {/* <span className="ml-1 font-xxs">{post.comments.length}</span> */}
+          </button>
+        </div>
+        <button
+          onClick={bookmarkHandler}
+          className="postActions"
+        //   disabled={bookmarkStatus === "pending"}
+        >
+          {/* {isBookmarked ? <BsBookmarkFill /> : <BsBookmark />} */}
+        </button>
+      </div>
+      <div className="">
+        <div >
+          <img src={Avatar} className="avatar small-avatar" alt="profile" />
+          <div className="flex-col">
+            <input type="text" placeholder="Enter your reply" />
+            <div>
+              <div></div>
+              <button className="button primary-button">Reply</button>
+            </div>
           </div>
         </div>
-      </Post>
+        <div>
+          <div>
+            <img src={Avatar} className="avatar small-avatar" alt="profile" />
+          </div>
+          <div>
+            <h3>annachase</h3>
+            <p>Haha, yes definitely !!</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

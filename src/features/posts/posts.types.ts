@@ -5,10 +5,7 @@ export type Reply = {
   uid: string;
 };
 export type Comment = {
-  commentId : string,
   comment: string;
-  username:string,
-  imageUrl : string,
   uid: string;
   replies: Reply[];
 };
@@ -35,10 +32,6 @@ export type BookmarkParams = {
   isBookmarked: boolean;
 };
 
-export type PostCommentParams ={
-  postId : string,
-  comment : Comment
-}
 export type PostsInitialState = {
   posts: Post[];
   uploadPostStatus: Status;
@@ -46,7 +39,5 @@ export type PostsInitialState = {
   likePostStatus: Status;
   bookmarkStatus: Status;
   deletePostStatus: Status;
-  postCommentStatus : Status
-
 
 };

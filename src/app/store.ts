@@ -15,6 +15,7 @@ export const store = configureStore({
     explore: exploreReducer,
     bookmark : bookmarkReducer,
     profile: profileReducer
+
   },
 });
 

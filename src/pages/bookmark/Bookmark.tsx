@@ -19,9 +19,6 @@ export const Bookmark = () => {
 
   return (
     <div>
-      {posts.length === 0 && (
-        <div className="empty-posts">You don't have any posts bookmarked!</div>
-      )}
       {posts.map((post) => {
         return <Post key={post.id} post={post} />;
       })}

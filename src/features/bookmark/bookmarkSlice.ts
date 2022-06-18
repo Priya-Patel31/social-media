@@ -86,6 +86,7 @@ const bookmarkSlice = createSlice({
       (state, action: PayloadAction<bookmarkPostReturnType>) => {
         if (action.payload.isBookmarked) {
         const findIndex = state.posts.findIndex((post)=>{
+
           return post.id === action.payload.post.id;
         })
         if(findIndex !== -1){
