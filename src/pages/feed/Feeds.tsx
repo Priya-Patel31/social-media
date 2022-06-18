@@ -21,6 +21,9 @@ const Feeds = () => {
   return (
     <div>
       <CreatePost />
+      {posts.length === 0 && (
+        <div className="empty-posts">Follow users to see posts here!</div>
+      )}
       {posts.map((post) => {
         return <Post post={post} key={post.id} />;
       })}

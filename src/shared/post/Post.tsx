@@ -13,11 +13,13 @@ import "./post.css";
 import { Post as PostType } from "../../features/posts/posts.types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { bookmarkPost, likePost } from "../../features/posts/PostsSlice";
+import { useNavigate } from "react-router";;
 
-type PostProps = { post: PostType };
-const Post = ({ post }: PostProps) => {
+type PostProps = { post: PostType,children?: React.ReactNode };
+const Post = ({ post ,children}: PostProps) => {
   const [show, setShow] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const handleMoreOptions = () => {
     setShow(!show);
   };
@@ -37,6 +39,9 @@ const Post = ({ post }: PostProps) => {
 
   const bookmarkHandler = () => {
     dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
+  };
+  const handleComments = () => {
+    navigate(`/comments/${post.id}`,{state : {post}});
   };
   return (
     <div className="flex-col post-container">
@@ -70,7 +75,7 @@ const Post = ({ post }: PostProps) => {
           <span className="ml-1 font-xxs">{post.likes.length}</span>
         </div>
         <div className="flex-row align-center">
-          <button className="postActions">
+          <button className="postActions" onClick={handleComments}>
             <MdInsertComment />
             <span className="ml-1 font-xxs">{post.comments.length}</span>
           </button>
@@ -83,6 +88,7 @@ const Post = ({ post }: PostProps) => {
           {isBookmarked ? <BsBookmarkFill /> : <BsBookmark />}
         </button>
       </div>
+      {children}
     </div>
   );
 };

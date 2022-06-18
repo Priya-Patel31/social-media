@@ -1,7 +1,7 @@
 import React from "react";
 import "./navbar.css";
 import Logo from "../../assets/images/Logo.svg";
-import { BiSearch, BsFillSunFill } from "../../assets/icons/icons";
+import { BsFillSunFill } from "../../assets/icons/icons";
 import { useNavigate } from "react-router";
 import { signOut,getAuth } from "firebase/auth";
 import { app } from "../../firebaseApp";
@@ -24,13 +24,13 @@ const Navbar = () => {
         </h1>
       </div>
       <form action="/action_page.php" className="searchbar-form">
-        <BiSearch className="search-icon"/>
+        {/* <BiSearch className="search-icon"/>
         <input
           type="text"
           placeholder="Enter search text..."
           name="search"
           className="searchbar"
-        />
+        /> */}
       </form>
       <div className="flex-row align-center">
         <button className="button primary-button font-bold" onClick={handleOnLogout}>
