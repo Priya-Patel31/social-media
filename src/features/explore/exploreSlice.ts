@@ -27,7 +27,6 @@ export const fetchPosts = createAsyncThunk<Post[]>(
     const snapshots = await getDocs(q);
     snapshots.forEach((post) => {
       fetchedPosts.push({ ...post.data(), id: post.id } as Post);
-   
     });
     return fetchedPosts as Post[];
   }

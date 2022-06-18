@@ -6,6 +6,7 @@ import usersReducer from "../features/users/usersSlice";
 import bookmarkReducer from "../features/bookmark/bookmarkSlice";
 import profileReducer from "../features/profile/profileSlice";
 
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -14,6 +15,7 @@ export const store = configureStore({
     explore: exploreReducer,
     bookmark : bookmarkReducer,
     profile: profileReducer
+
   },
 });
 

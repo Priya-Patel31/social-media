@@ -42,3 +42,4 @@ export type followUserParams = {
   userId: string;
   follow: boolean;
 };
+

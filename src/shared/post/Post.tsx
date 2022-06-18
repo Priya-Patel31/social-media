@@ -14,8 +14,8 @@ import { Post as PostType } from "../../features/posts/posts.types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { bookmarkPost, likePost } from "../../features/posts/PostsSlice";
 
-type PostProps = { post: PostType };
-const Post = ({ post }: PostProps) => {
+type PostProps = { post: PostType; explore?: boolean };
+const Post = ({ post, explore }: PostProps) => {
   const [show, setShow] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const handleMoreOptions = () => {
@@ -32,11 +32,11 @@ const Post = ({ post }: PostProps) => {
   const isBookmarked: boolean =
     user?.bookmarks?.some((bookmarkId) => bookmarkId === post.id) ?? false;
   const handleLikes = () => {
-    dispatch(likePost({ postId: post.id ?? "", isLiked }));
+    dispatch(likePost({ postId: post.id ?? "", isLiked, explore }));
   };
 
   const bookmarkHandler = () => {
-    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
+    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked, explore }));
   };
   return (
     <div className="flex-col post-container">
@@ -51,7 +51,9 @@ const Post = ({ post }: PostProps) => {
                   className="more-icon"
                   onClick={() => handleMoreOptions()}
                 />
-                {show && <MoreOptions post={post}></MoreOptions>}
+                {show && (
+                  <MoreOptions post={post} explore={explore}></MoreOptions>
+                )}
               </div>
             )}
           </div>
