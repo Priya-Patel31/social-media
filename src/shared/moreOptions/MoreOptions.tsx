@@ -8,15 +8,17 @@ import "./moreOptions.css";
 
 type MoreOptionsProps = {
   post: Post;
+  explore?: boolean
 };
 
-const MoreOptions = ({ post }: MoreOptionsProps) => {
+const MoreOptions = ({ post ,explore}: MoreOptionsProps) => {
   const dispatch = useAppDispatch();
   const editHandler = () => {
     setShowModal(!showModal);
   };
   const deletePostHandler = () => {
-    dispatch(deletePost(post.id ?? ""));
+    dispatch(deletePost({postId: post.id ?? "",explore}));
+
   };
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -30,6 +32,7 @@ const MoreOptions = ({ post }: MoreOptionsProps) => {
             post={post}
             update={true}
             setShowModal={setShowModal}
+            explore={explore}
           />
         </Modal>
       )}

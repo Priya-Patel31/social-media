@@ -13,11 +13,16 @@ import {
 import { db } from "../../firebaseApp";
 import { query, where } from "firebase/firestore";
 import {
+  ActionPostReturnType,
   BookmarkParams,
+  DeletePostParams,
   LikePostParams,
   Post,
   PostsInitialState,
 } from "./posts.types";
+import { isPresent } from "../../shared/utils/helper";
+import { followUser } from "../auth/authSlice";
+import { followUserReturnType } from "../auth/auth.types";
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -26,18 +31,21 @@ export const uploadPost = createAsyncThunk<any, Post>(
 
     const docId = await addDoc(collection(db, "posts"), { ...postData, uid });
     const post = await (await getDoc(docId)).data();
-    return {...post,id:docId.id};
+    return { ...post, id: docId.id };
   }
 );
 
-export const fetchUserPosts = createAsyncThunk<Post[]>(
+export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
   "posts/fetchUserPost",
-  async () => {
+  async (following) => {
+    console.log(following);
     const posts: Post[] = [];
     const uid: any = localStorage.getItem("uid");
-    const q = query(collection(db, "posts"), where("uid", "in", [uid]));
+    const q = query(
+      collection(db, "posts"),
+      where("uid", "in", [uid, ...following])
+    );
     const Snap = await getDocs(q);
-
     Snap.forEach(async (doc) => {
       const post = (await doc.data()) as Post;
       posts.push({ ...post, id: doc.id });
@@ -46,9 +54,9 @@ export const fetchUserPosts = createAsyncThunk<Post[]>(
   }
 );
 
-export const likePost = createAsyncThunk<Post, LikePostParams>(
+export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
-  async ({ postId, isLiked }) => {
+  async ({ postId, isLiked, explore }) => {
     const uid = localStorage.getItem("uid");
     const postRef = await doc(db, "posts", postId ?? "");
     if (isLiked) {
@@ -57,39 +65,45 @@ export const likePost = createAsyncThunk<Post, LikePostParams>(
       await updateDoc(postRef, { likes: arrayUnion(uid) });
     }
     const updatedPost = await (await getDoc(postRef)).data();
-    return { ...updatedPost, id: postRef.id } as Post;
+    return {
+      post: { ...updatedPost, id: postRef.id },
+      explore,
+    } as ActionPostReturnType;
   }
 );
 
-export const bookmarkPost = createAsyncThunk<Post, BookmarkParams>(
-  "posts/bookmark",
-  async ({ postId, isBookmarked }) => {
-    const uid = localStorage.getItem("uid");
-    const postRef = await doc(db, "posts", postId);
-    if (isBookmarked) {
-      await updateDoc(postRef, { bookmarks: arrayRemove(uid) });
-    } else {
-      await updateDoc(postRef, { bookmarks: arrayUnion(uid) });
-    }
-    const updatedPost = await (await getDoc(postRef)).data();
-    return { ...updatedPost, id: postRef.id } as Post;
+export const bookmarkPost = createAsyncThunk<
+  ActionPostReturnType,
+  BookmarkParams
+>("posts/bookmark", async ({ postId, isBookmarked, explore }) => {
+  const uid = localStorage.getItem("uid");
+  const postRef = await doc(db, "posts", postId);
+  if (isBookmarked) {
+    await updateDoc(postRef, { bookmarks: arrayRemove(uid) });
+  } else {
+    await updateDoc(postRef, { bookmarks: arrayUnion(uid) });
   }
-);
+  const updatedPost = await (await getDoc(postRef)).data();
+  return {
+    post: { ...updatedPost, id: postRef.id },
+    explore,
+  } as ActionPostReturnType;
+});
 
-export const editPost = createAsyncThunk<Post, { post: Post }>(
-  "posts/editPost",
-  async ({ post }) => {
-    const postRef = doc(db, "posts", post.id ?? "");
-    await updateDoc(postRef, { caption: post.caption });
-    return post;
-  }
-);
-export const deletePost = createAsyncThunk<string, string>(
+export const editPost = createAsyncThunk<
+  ActionPostReturnType,
+  { post: Post; explore?: boolean }
+>("posts/editPost", async ({ post, explore }) => {
+  const postRef = doc(db, "posts", post.id ?? "");
+  await updateDoc(postRef, { caption: post.caption });
+  return { post, explore } as ActionPostReturnType;
+});
+export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
   "posts/deletePost",
-  async (postId) => {
+  async ({ postId, explore }) => {
     const postRef = doc(db, "posts", postId ?? "");
     await deleteDoc(postRef);
-    return postId;
+    return { postId, explore } as DeletePostParams;
   }
 );
 const initialState: PostsInitialState = {
@@ -134,14 +148,21 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       likePost.fulfilled,
-      (state, action: PayloadAction<Post>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
+          state.likePostStatus = "succeded";
+          return;
+        }
         const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.id;
+          return post.id === action.payload.post.id;
         });
         if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload;
-          state.likePostStatus = "succeded";
+          state.posts[postIndex] = action.payload.post;
         }
+        state.likePostStatus = "succeded";
       }
     );
     builder.addCase(likePost.pending, (state) => {
@@ -152,14 +173,21 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       bookmarkPost.fulfilled,
-      (state, action: PayloadAction<Post>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
+          state.bookmarkStatus = "succeded";
+          return;
+        }
         const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.id;
+          return post.id === action.payload.post.id;
         });
         if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload;
-          state.bookmarkStatus = "succeded";
+          state.posts[postIndex] = action.payload.post;
         }
+        state.bookmarkStatus = "succeded";
       }
     );
     builder.addCase(bookmarkPost.pending, (state) => {
@@ -170,12 +198,20 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       editPost.fulfilled,
-      (state, action: PayloadAction<Post>) => {
+      (state, action: PayloadAction<ActionPostReturnType>) => {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.post.id ?? "" })
+        ) {
+          state.uploadPostStatus = "succeded";
+          return;
+        }
         const postIndex = state.posts.findIndex((post) => {
-          return post.id === action.payload.id;
+          return post.id === action.payload.post.id;
         });
         if (postIndex !== -1) {
-          state.posts[postIndex] = action.payload;
+          state.posts[postIndex] = action.payload.post;
+
           state.uploadPostStatus = "succeded";
         }
       }
@@ -188,9 +224,16 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       deletePost.fulfilled,
-      (state, action: PayloadAction<string>) => {
+      (state, action: PayloadAction<DeletePostParams>) => {
+        if (
+          action.payload.explore &&
+          !isPresent({ arr: state.posts, value: action.payload.postId ?? "" })
+        ) {
+          state.deletePostStatus = "succeded";
+          return;
+        }
         state.posts = state.posts.filter((post) => {
-          return post.id !== action.payload;
+          return post.id !== action.payload.postId;
         });
         state.deletePostStatus = "succeded";
       }
@@ -201,8 +244,13 @@ const postsSlice = createSlice({
     builder.addCase(deletePost.rejected, (state) => {
       state.deletePostStatus = "failed";
     });
+    builder.addCase(
+      followUser.fulfilled,
+      (state, action: PayloadAction<followUserReturnType>) => {
+         state.posts.unshift(...action.payload.posts);
+      }
+    );
   },
 });
 
 export default postsSlice.reducer;
-// export const {} = postsSlice.actions;

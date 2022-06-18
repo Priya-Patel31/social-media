@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseApp";
-import { User } from "../auth/auth.types";
-import { followUser, followUserReturnType } from "../auth/authSlice";
+import { followUserReturnType, User } from "../auth/auth.types";
+import { followUser } from "../auth/authSlice";
 import { usersInitialState } from "./users.types";
 
 const initialState: usersInitialState = {
@@ -22,9 +22,13 @@ export const fetchUsers = createAsyncThunk<User[],string[]>(
     );
    
     const snapshots = await getDocs(q);
+    
     snapshots.forEach((user) => {
       fetchedUsers.push(user.data() as User);
+      console.log(user.data())
     });
+    console.log({following});
+    console.log({fetchedUsers});
     return fetchedUsers;
   }
 );

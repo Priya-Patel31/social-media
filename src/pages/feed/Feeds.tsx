@@ -9,16 +9,21 @@ const Feeds = () => {
   const { posts, fetchPostsStatus } = useAppSelector((state) => {
     return state.posts;
   });
+  const { user } = useAppSelector((state) => {
+    return state.auth;
+  });
   useEffect(() => {
-    if (fetchPostsStatus === "idle") {
-      dispatch(fetchUserPosts());
+    console.log(user?.following);
+    if (fetchPostsStatus === "idle" && user?.following) {
+      dispatch(fetchUserPosts(user?.following ?? []));
     }
-  }, [dispatch, fetchPostsStatus]);
+  }, [dispatch, fetchPostsStatus, user?.following]);
+
   return (
     <div>
       <CreatePost />
       {posts.map((post) => {
-        return <Post post ={post} key={post.id}/>;
+        return <Post post={post} key={post.id} />;
       })}
     </div>
   );

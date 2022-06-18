@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
@@ -10,10 +10,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getCurrentUser } from "./features/auth/authSlice";
 import { useAppDispatch } from "./app/hooks";
-
+import { Explore } from "./pages/explore/Explore";
 
 function App() {
-
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(getCurrentUser());
@@ -27,9 +26,17 @@ function App() {
           element={
             <PrivateRoute path="/">
               <Home />
-             </PrivateRoute>
+            </PrivateRoute>
           }
         >
+          <Route
+            path="/explore"
+            element={
+              <PrivateRoute>
+                <Explore />
+              </PrivateRoute>
+            }
+          />
           <Route index element={<Feeds />} />
           <Route path="profile" element={<Profile />} />
         </Route>

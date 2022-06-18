@@ -1,4 +1,5 @@
 import { Status } from "../../generic.types";
+import { Post } from "../posts/posts.types";
 
 export type signupState = {
   name: string;
@@ -27,4 +28,13 @@ export type authInitialState = {
   signinStatus: Status;
   followUserStatus : Status
 };
-
+export type followUserReturnType = {
+  uid: string;
+  userId: string;
+  follow: boolean;
+  posts : Post[];
+};
+export type followUserParams = {
+  userId: string;
+  follow: boolean;
+};
