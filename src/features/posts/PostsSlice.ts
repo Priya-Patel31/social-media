@@ -15,11 +15,9 @@ import { query, where } from "firebase/firestore";
 import {
   ActionPostReturnType,
   BookmarkParams,
-  Comment,
   DeletePostParams,
   LikePostParams,
   Post,
-  PostCommentParams,
   PostsInitialState,
 } from "./posts.types";
 import { followUser } from "../auth/authSlice";
@@ -109,23 +107,6 @@ export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
     await updateDoc(userRef, { posts: arrayRemove(postId) });
     await deleteDoc(postRef);
     return { postId } as DeletePostParams;
-  }
-);
-export const postComment = createAsyncThunk<Comment, PostCommentParams>(
-  "posts/comment",
-  async ({ postId, comment }) => {
-    const postRef = doc(db, "posts", postId);
-    await updateDoc(postRef, { comments: arrayUnion(comment) });
-    return comment;
-  }
-);
-
-export const getCommentsByPostId = createAsyncThunk<Comment[], string>(
-  "posts/getComments",
-  async (postId) => {
-    const postRef = doc(db, "posts", postId);
-    const comments = (await (await getDoc(postRef)).data()) as Comment[];
-    return comments as Comment[];
   }
 );
 

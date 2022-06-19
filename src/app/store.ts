@@ -5,6 +5,7 @@ import postsReducer from "../features/posts/PostsSlice";
 import usersReducer from "../features/users/usersSlice";
 import bookmarkReducer from "../features/bookmark/bookmarkSlice";
 import profileReducer from "../features/profile/profileSlice";
+import commentsReducer from "../features/comments/commentsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
     users: usersReducer,
     explore: exploreReducer,
     bookmark : bookmarkReducer,
-    profile: profileReducer
+    profile: profileReducer,
+    comments: commentsReducer
   },
 });
 

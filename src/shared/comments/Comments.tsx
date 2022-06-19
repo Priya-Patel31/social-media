@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Avatar from "../../assets/images/avatar.jpg";
-import { Comment, Post as PostType } from "../../features/posts/posts.types";
+import { Post as PostType } from "../../features/posts/posts.types";
 import { AiOutlineLeft } from "../../assets/icons/icons";
 import "./comments.css";
 import Post from "../post/Post";
@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   getCommentsByPostId,
   postComment,
-} from "../../features/posts/PostsSlice";
+} from "../../features/comments/commentsSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
@@ -20,24 +20,25 @@ const Comments = () => {
   const { user } = useAppSelector((state) => {
     return state.auth;
   });
+  const { comments, fetchCommentStatus } = useAppSelector((state) => {
+    return state.comments;
+  });
   const dispatch = useAppDispatch();
   const [input, setInput] = useState<string>("");
-  const [comments, setComments] = useState<Comment[]>(post?.comments ?? []);
   const navigate = useNavigate();
   useEffect(() => {
     async function getComments() {
       try {
         const res = (await dispatch(getCommentsByPostId(post.id ?? ""))) as any;
         unwrapResult(res);
-        setComments(res.payload.comments);
       } catch (e) {
         toast.error("Failed to fetch comments");
       }
     }
-    if (post.id) {
+    if (post.id && fetchCommentStatus === "idle") {
       getComments();
     }
-  }, [dispatch, post.id]);
+  }, [dispatch, post.id, fetchCommentStatus]);
   const handleReply = async () => {
     try {
       const uid = localStorage.getItem("uid");
@@ -56,7 +57,6 @@ const Comments = () => {
         })
       );
       unwrapResult(res);
-      setComments([comment, ...comments]);
       setInput("");
       toast.success("Comment posted successfully !!");
     } catch (e) {
