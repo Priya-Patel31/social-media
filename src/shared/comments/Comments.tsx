@@ -40,7 +40,6 @@ const Comments = () => {
       getComments();
       ref.current = true;
     }
-
   }, [dispatch, postId, fetchCommentStatus, isDelete, navigate]);
 
   const handleReply = async () => {

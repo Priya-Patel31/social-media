@@ -25,6 +25,7 @@ export const fetchUsers = createAsyncThunk<User[],string[]>(
     
     snapshots.forEach((user) => {
       fetchedUsers.push(user.data() as User);
+      console.log(user.data())
     });
 
     return fetchedUsers;

@@ -8,7 +8,6 @@ export const Explore = () => {
   const { posts, fetchPostsStatus } = useAppSelector((state) => {
     return state.explore;
   });
-
   useEffect(() => {
     if (fetchPostsStatus === "idle") {
       dispatch(fetchPosts());
