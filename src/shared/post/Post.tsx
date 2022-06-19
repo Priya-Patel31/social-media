@@ -34,11 +34,14 @@ const Post = ({ post ,children}: PostProps) => {
   const isBookmarked: boolean =
     user?.bookmarks?.some((bookmarkId) => bookmarkId === post.id) ?? false;
   const handleLikes = () => {
-    dispatch(likePost({ postId: post.id ?? "", isLiked }));
+    dispatch(likePost({ postId: post.id ?? "", isLiked, explore }));
   };
 
   const bookmarkHandler = () => {
-    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
+    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked, explore }));
+  };
+  const handleComments = () => {
+    navigate(`/comments/${post.id}`,{state : {post}});
   };
   const handleComments = () => {
     navigate(`/comments/${post.id}`,{state : {post}});
@@ -56,7 +59,9 @@ const Post = ({ post ,children}: PostProps) => {
                   className="more-icon"
                   onClick={() => handleMoreOptions()}
                 />
-                {show && <MoreOptions post={post}></MoreOptions>}
+                {show && (
+                  <MoreOptions post={post} explore={explore}></MoreOptions>
+                )}
               </div>
             )}
           </div>

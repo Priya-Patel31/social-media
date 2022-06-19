@@ -72,6 +72,7 @@ export const getCurrentUser = createAsyncThunk<User | false>(
     const currentUserId = localStorage.getItem("uid");
     if (currentUserId) {
       const userRef = await getDoc(doc(db, "users", currentUserId));
+      console.log(userRef.data());
       return userRef.data() as User;
     } else {
       return false;
@@ -120,6 +121,7 @@ export const saveUser = createAsyncThunk<FormDataType, FormDataType>(
     return formData;
   }
 );
+
 const initialState: authInitialState = {
   user: null,
   signupStatus: "idle",
