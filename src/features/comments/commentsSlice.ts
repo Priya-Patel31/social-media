@@ -3,7 +3,6 @@ import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseApp";
 import {
   ActionPostReturnType,
-  Comment,
   DeletePostParams,
   Post,
   PostCommentParams,

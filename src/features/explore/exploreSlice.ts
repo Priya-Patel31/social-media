@@ -4,7 +4,6 @@ import { db } from "../../firebaseApp";
 import { postComment } from "../comments/commentsSlice";
 import {
   ActionPostReturnType,
-  Comment,
   DeletePostParams,
   Post,
   PostCommentParams,

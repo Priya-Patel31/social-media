@@ -34,11 +34,11 @@ const Post = ({ post ,children}: PostProps) => {
   const isBookmarked: boolean =
     user?.bookmarks?.some((bookmarkId) => bookmarkId === post.id) ?? false;
   const handleLikes = () => {
-    dispatch(likePost({ postId: post.id ?? "", isLiked}));
+    dispatch(likePost({ postId: post.id ?? "", isLiked }));
   };
 
   const bookmarkHandler = () => {
-    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
+    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked}));
   };
   const handleComments = () => {
     navigate(`/comments/${post.id}`,{state : {post}});

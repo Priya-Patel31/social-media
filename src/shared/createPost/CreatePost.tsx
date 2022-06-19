@@ -55,7 +55,7 @@ const CreatePost = ({
     if (post !== null && setShowModal !== null) {
       let updatedPost = { ...post, caption: input };
       try {
-        const res = await dispatch(editPost({ post: updatedPost,explore }));
+        const res = await dispatch(editPost({ post: updatedPost }));
         unwrapResult(res);
         toast.success("Post updated successfully !!");
         setInput("");
