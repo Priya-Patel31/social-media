@@ -1,8 +1,9 @@
 import { Status } from "../../generic.types"
-import { Comment } from "../posts/posts.types"
+import { Post } from "../posts/posts.types"
 
 export type InitialStateType ={
-    comments: Comment[],
+   post: Post | null,
     fetchCommentStatus : Status,
-    postCommentStatus : Status
+    postCommentStatus : Status,
+    isDelete : boolean
 }

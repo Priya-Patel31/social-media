@@ -41,7 +41,7 @@ const Post = ({ post ,children}: PostProps) => {
     dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
   };
   const handleComments = () => {
-    navigate(`/comments/${post.id}`,{state : {post}});
+    navigate(`/comments/${post.id}`);
   };
   return (
     <div className="flex-col post-container">

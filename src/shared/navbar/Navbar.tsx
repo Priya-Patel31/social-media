@@ -3,16 +3,30 @@ import "./navbar.css";
 import Logo from "../../assets/images/Logo.svg";
 import { BsFillSunFill } from "../../assets/icons/icons";
 import { useNavigate } from "react-router";
-import { signOut,getAuth } from "firebase/auth";
+import { signOut, getAuth } from "firebase/auth";
 import { app } from "../../firebaseApp";
+import { useAppDispatch } from "../../app/hooks";
+import { resetAuthState } from "../../features/auth/authSlice";
+import { resetBookmarkState } from "../../features/bookmark/bookmarkSlice";
+import { resetCommentState } from "../../features/comments/commentsSlice";
+import { resetPostState } from "../../features/posts/PostsSlice";
+import { resetExploreState } from "../../features/explore/exploreSlice";
+import { resetUserSlice } from "../../features/users/usersSlice";
 
 const Navbar = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const auth = getAuth(app);
-  const handleOnLogout = async()=>{
+  const handleOnLogout = async () => {
+    dispatch(resetAuthState());
+    dispatch(resetBookmarkState());
+    dispatch(resetCommentState());
+    dispatch(resetPostState());
+    dispatch(resetExploreState());
+    dispatch(resetUserSlice());
     await signOut(auth);
     navigate("/login");
-  }
+  };
   return (
     <div className="navbar-container flex-row align-center justify-between flex-wrap">
       <div className="flex-row align-center ">
@@ -33,10 +47,13 @@ const Navbar = () => {
         /> */}
       </form>
       <div className="flex-row align-center">
-        <button className="button primary-button font-bold" onClick={handleOnLogout}>
+        <button
+          className="button primary-button font-bold"
+          onClick={handleOnLogout}
+        >
           Logout
         </button>
-        <BsFillSunFill className="mr-2 theme-icon"  />
+        <BsFillSunFill className="mr-2 theme-icon" />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import CreatePost from "../../shared/createPost/CreatePost";
 import Post from "../../shared/post/Post";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { fetchUserPosts } from "../../features/posts/PostsSlice";
+import { resetCommentState } from "../../features/comments/commentsSlice";
 
 const Feeds = () => {
   const dispatch = useAppDispatch();

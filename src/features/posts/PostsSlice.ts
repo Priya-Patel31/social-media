@@ -18,11 +18,13 @@ import {
   DeletePostParams,
   LikePostParams,
   Post,
+  PostCommentParams,
   PostsInitialState,
 } from "./posts.types";
 import { followUser } from "../auth/authSlice";
 import { followUserReturnType } from "../auth/auth.types";
 import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
+import { postComment } from "../comments/commentsSlice";
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -123,7 +125,17 @@ const initialState: PostsInitialState = {
 const postsSlice = createSlice({
   name: "posts",
   initialState,
-  reducers: {},
+  reducers: {
+    resetPostState: (state) => {
+      state.posts = [];
+      state.uploadPostStatus = "idle";
+      state.fetchPostsStatus = "idle";
+      state.likePostStatus = "idle";
+      state.bookmarkStatus = "idle";
+      state.deletePostStatus = "idle";
+      state.postCommentStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       uploadPost.fulfilled,
@@ -221,7 +233,19 @@ const postsSlice = createSlice({
         state.posts.unshift(...action.payload.posts);
       }
     );
+    builder.addCase(
+      postComment.fulfilled,
+      (state, action: PayloadAction<PostCommentParams>) => {
+        const postIndex = state.posts.findIndex((post) => {
+          return post.id === action.payload.postId;
+        });
+        if (postIndex !== -1) {
+          state.posts[postIndex].comments.unshift(action.payload.comment);
+        }
+      }
+    );
   },
 });
 
 export default postsSlice.reducer;
+export const { resetPostState } = postsSlice.actions;

@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseApp";
+import { postComment } from "../comments/commentsSlice";
 import {
   ActionPostReturnType,
   DeletePostParams,
   Post,
+  PostCommentParams,
 } from "../posts/posts.types";
 import {
   likePost,
@@ -35,7 +37,12 @@ export const fetchPosts = createAsyncThunk<Post[], string[]>(
 const bookmarkSlice = createSlice({
   name: "bookmark",
   initialState,
-  reducers: {},
+  reducers: {
+    resetBookmarkState: (state) => {
+      state.posts = [];
+      state.bookmarkFetchPostsStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchPosts.fulfilled,
@@ -85,17 +92,27 @@ const bookmarkSlice = createSlice({
       bookmarkPost.fulfilled,
       (state, action: PayloadAction<bookmarkPostReturnType>) => {
         if (action.payload.isBookmarked) {
-        const findIndex = state.posts.findIndex((post)=>{
-          return post.id === action.payload.post.id;
-        })
-        if(findIndex !== -1){
-          state.posts = state.posts.filter((post) =>{
-            return  post.id !== action.payload.post.id; 
-          })
-        
-        }
+          const findIndex = state.posts.findIndex((post) => {
+            return post.id === action.payload.post.id;
+          });
+          if (findIndex !== -1) {
+            state.posts = state.posts.filter((post) => {
+              return post.id !== action.payload.post.id;
+            });
+          }
         } else {
-         state.posts.unshift(action.payload.post);
+          state.posts.unshift(action.payload.post);
+        }
+      }
+    );
+    builder.addCase(
+      postComment.fulfilled,
+      (state, action: PayloadAction<PostCommentParams>) => {
+        const postIndex = state.posts.findIndex((post) => {
+          return post.id === action.payload.postId;
+        });
+        if (postIndex !== -1) {
+          state.posts[postIndex].comments.unshift(action.payload.comment);
         }
       }
     );
@@ -103,3 +120,4 @@ const bookmarkSlice = createSlice({
 });
 
 export default bookmarkSlice.reducer;
+export const { resetBookmarkState } = bookmarkSlice.actions;
