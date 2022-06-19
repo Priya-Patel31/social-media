@@ -58,7 +58,7 @@ export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
 
 export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
-  async ({ postId, isLiked, explore }) => {
+  async ({ postId, isLiked }) => {
     const uid = localStorage.getItem("uid");
     const postRef = await doc(db, "posts", postId ?? "");
     if (isLiked) {

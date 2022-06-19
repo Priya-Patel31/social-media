@@ -43,9 +43,6 @@ const Post = ({ post ,children}: PostProps) => {
   const handleComments = () => {
     navigate(`/comments/${post.id}`,{state : {post}});
   };
-  const handleComments = () => {
-    navigate(`/comments/${post.id}`);
-  };
   return (
     <div className="flex-col post-container">
       <div className="flex-row">
