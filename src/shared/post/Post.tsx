@@ -58,7 +58,7 @@ const Post = ({ post ,children}: PostProps) => {
                   onClick={() => handleMoreOptions()}
                 />
                 {show && (
-                  <MoreOptions post={post} explore={explore}></MoreOptions>
+                  <MoreOptions post={post}></MoreOptions>
                 )}
               </div>
             )}
