@@ -34,15 +34,16 @@ const Post = ({ post ,children}: PostProps) => {
   const isBookmarked: boolean =
     user?.bookmarks?.some((bookmarkId) => bookmarkId === post.id) ?? false;
   const handleLikes = () => {
-    dispatch(likePost({ postId: post.id ?? "", isLiked, explore }));
+    dispatch(likePost({ postId: post.id ?? "", isLiked}));
   };
 
   const bookmarkHandler = () => {
-    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked, explore }));
+    dispatch(bookmarkPost({ postId: post.id ?? "", isBookmarked }));
   };
   const handleComments = () => {
     navigate(`/comments/${post.id}`,{state : {post}});
   };
+ 
   return (
     <div className="flex-col post-container">
       <div className="flex-row">
