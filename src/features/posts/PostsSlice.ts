@@ -15,8 +15,6 @@ import { query, where } from "firebase/firestore";
 import {
   ActionPostReturnType,
   BookmarkParams,
-  Comment,
-
   DeletePostParams,
   LikePostParams,
   Post,
@@ -26,6 +24,7 @@ import {
 import { followUser } from "../auth/authSlice";
 import { followUserReturnType } from "../auth/auth.types";
 import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
+import { postComment } from "../comments/commentsSlice";
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -59,7 +58,7 @@ export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
 
 export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
-  async ({ postId, isLiked, explore }) => {
+  async ({ postId, isLiked }) => {
     const uid = localStorage.getItem("uid");
     const postRef = await doc(db, "posts", postId ?? "");
     if (isLiked) {
@@ -85,7 +84,6 @@ export const bookmarkPost = createAsyncThunk<
   } else {
     await updateDoc(userRef, { bookmarks: arrayUnion(postId) });
   }
-
   const postRef = await getDoc(doc(db, "posts", postId));
 
   return {
@@ -113,23 +111,6 @@ export const deletePost = createAsyncThunk<DeletePostParams, DeletePostParams>(
     return { postId } as DeletePostParams;
   }
 );
-export const postComment = createAsyncThunk<Comment, PostCommentParams>(
-  "posts/comment",
-  async ({ postId, comment }) => {
-    const postRef = doc(db, "posts", postId);
-    await updateDoc(postRef, { comments: arrayUnion(comment) });
-    return comment;
-  }
-);
-
-export const getCommentsByPostId = createAsyncThunk<Comment[], string>(
-  "posts/getComments",
-  async (postId) => {
-    const postRef = doc(db, "posts", postId);
-    const comments = (await (await getDoc(postRef)).data()) as Comment[];
-    return comments as Comment[];
-  }
-);
 
 const initialState: PostsInitialState = {
   posts: [],
@@ -144,7 +125,17 @@ const initialState: PostsInitialState = {
 const postsSlice = createSlice({
   name: "posts",
   initialState,
-  reducers: {},
+  reducers: {
+    resetPostState: (state) => {
+      state.posts = [];
+      state.uploadPostStatus = "idle";
+      state.fetchPostsStatus = "idle";
+      state.likePostStatus = "idle";
+      state.bookmarkStatus = "idle";
+      state.deletePostStatus = "idle";
+      state.postCommentStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       uploadPost.fulfilled,
@@ -242,7 +233,19 @@ const postsSlice = createSlice({
         state.posts.unshift(...action.payload.posts);
       }
     );
+    builder.addCase(
+      postComment.fulfilled,
+      (state, action: PayloadAction<PostCommentParams>) => {
+        const postIndex = state.posts.findIndex((post) => {
+          return post.id === action.payload.postId;
+        });
+        if (postIndex !== -1) {
+          state.posts[postIndex].comments.unshift(action.payload.comment);
+        }
+      }
+    );
   },
 });
 
 export default postsSlice.reducer;
+export const { resetPostState } = postsSlice.actions;

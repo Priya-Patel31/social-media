@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseApp";
-import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
+import { postComment } from "../comments/commentsSlice";
 import {
   ActionPostReturnType,
   DeletePostParams,
   Post,
+  PostCommentParams,
 } from "../posts/posts.types";
 import {
   likePost,
-  bookmarkPost,
   deletePost,
   editPost,
   uploadPost,
@@ -37,7 +37,12 @@ export const fetchPosts = createAsyncThunk<Post[], string[]>(
 const profileSlice = createSlice({
   name: "profile",
   initialState,
-  reducers: {},
+  reducers: {
+    resetProfileState: (state) => {
+      state.posts = [];
+      state.fetchProfilePostsStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchPosts.fulfilled,
@@ -90,20 +95,13 @@ const profileSlice = createSlice({
       }
     );
     builder.addCase(
-      bookmarkPost.fulfilled,
-      (state, action: PayloadAction<bookmarkPostReturnType>) => {
-        if (action.payload.isBookmarked) {
-        const findIndex = state.posts.findIndex((post)=>{
-          return post.id === action.payload.post.id;
-        })
-        if(findIndex !== -1){
-          state.posts = state.posts.filter((post) =>{
-            return  post.id !== action.payload.post.id; 
-          })
-        
-        }
-        } else {
-         state.posts.unshift(action.payload.post);
+      postComment.fulfilled,
+      (state, action: PayloadAction<PostCommentParams>) => {
+        const postIndex = state.posts.findIndex((post) => {
+          return post.id === action.payload.postId;
+        });
+        if (postIndex !== -1) {
+          state.posts[postIndex].comments.unshift(action.payload.comment);
         }
       }
     );
@@ -111,3 +109,4 @@ const profileSlice = createSlice({
 });
 
 export default profileSlice.reducer;
+export const { resetProfileState } = profileSlice.actions;

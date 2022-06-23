@@ -53,7 +53,6 @@ const Profile = () => {
         </div>
       </div>
       {posts.length === 0 && <div className="empty-posts">You haven't posted anything yet!</div>}
-
       {posts.map((post) => {
         return <Post key={post.id} post={post} />;
       })}

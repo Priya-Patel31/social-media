@@ -128,7 +128,6 @@ const initialState: authInitialState = {
   signinStatus: "idle",
   followUserStatus: "idle",
   saveProfileStatus: "idle",
-
 };
 const authSlice = createSlice({
   name: "auth",
@@ -142,6 +141,13 @@ const authSlice = createSlice({
     },
     updateSigninStatus: (state, action: PayloadAction<Status>) => {
       state.signinStatus = action.payload;
+    },
+    resetAuthState: (state) => {
+      state.user = null;
+      state.signupStatus = "idle";
+      state.signinStatus = "idle";
+      state.followUserStatus = "idle";
+      state.saveProfileStatus = "idle";
     },
   },
   extraReducers: (builder) => {
@@ -240,5 +246,9 @@ const authSlice = createSlice({
   },
 });
 export default authSlice.reducer;
-export const { updateSigninStatus, updateSignupStatus, updateUser } =
-  authSlice.actions;
+export const {
+  updateSigninStatus,
+  updateSignupStatus,
+  updateUser,
+  resetAuthState,
+} = authSlice.actions;

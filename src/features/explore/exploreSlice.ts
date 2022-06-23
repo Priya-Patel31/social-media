@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../../firebaseApp";
+import { postComment } from "../comments/commentsSlice";
 import {
   ActionPostReturnType,
   DeletePostParams,
   Post,
+  PostCommentParams,
 } from "../posts/posts.types";
 import {
   likePost,
@@ -35,7 +37,12 @@ export const fetchPosts = createAsyncThunk<Post[]>(
 const exploreSlice = createSlice({
   name: "explore",
   initialState,
-  reducers: {},
+  reducers: {
+    resetExploreState: (state) => {
+      state.posts = [];
+      state.fetchPostsStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchPosts.fulfilled,
@@ -86,7 +93,19 @@ const exploreSlice = createSlice({
         state.posts.unshift(action.payload);
       }
     );
+    builder.addCase(
+      postComment.fulfilled,
+      (state, action: PayloadAction<PostCommentParams>) => {
+        const postIndex = state.posts.findIndex((post) => {
+          return post.id === action.payload.postId;
+        });
+        if (postIndex !== -1) {
+          state.posts[postIndex].comments.unshift(action.payload.comment);
+        }
+      }
+    );
   },
 });
 
 export default exploreSlice.reducer;
+export const { resetExploreState } = exploreSlice.actions;

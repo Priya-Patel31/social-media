@@ -48,5 +48,4 @@ export type PostsInitialState = {
   deletePostStatus: Status;
   postCommentStatus : Status
 
-
 };
