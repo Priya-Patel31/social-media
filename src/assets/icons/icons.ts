@@ -1,5 +1,5 @@
 import { BiSearch, BiCommentDetail } from "react-icons/bi";
-import { AiFillHome,AiOutlineLeft } from "react-icons/ai";
+import { AiFillHome, AiOutlineLeft } from "react-icons/ai";
 import {
   BsFillBookmarkFill,
   BsFillSunFill,
@@ -11,14 +11,13 @@ import {
   BsFillEyeSlashFill,
   BsArrowRight,
   BsHeart,
-  BsBookmark
-
+  BsBookmark,
 } from "react-icons/bs";
 import { HiPlus } from "react-icons/hi";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdExplore, MdInsertComment, MdModeEdit } from "react-icons/md";
 import { FaUserCircle, FaEnvelope } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdCheckmarkCircleOutline } from "react-icons/io";
 export {
   BiSearch,
   AiFillHome,
@@ -42,7 +41,6 @@ export {
   BsArrowRight,
   BsHeart,
   BsBookmark,
-  AiOutlineLeft
-
- 
+  AiOutlineLeft,
+  IoMdCheckmarkCircleOutline,
 };

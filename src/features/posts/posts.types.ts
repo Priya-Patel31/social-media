@@ -1,3 +1,4 @@
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import { Status } from "../../generic.types";
 
 export type Reply = {
@@ -5,10 +6,10 @@ export type Reply = {
   uid: string;
 };
 export type Comment = {
-  commentId : string,
+  commentId: string;
   comment: string;
-  username:string,
-  imageUrl : string,
+  username: string;
+  imageUrl: string;
   uid: string;
   replies: Reply[];
 };
@@ -28,17 +29,17 @@ export type LikePostParams = {
   postId: string;
   isLiked: boolean;
 };
-export type ActionPostReturnType = { post: Post;};
-export type DeletePostParams = {postId : string }
+export type ActionPostReturnType = { post: Post };
+export type DeletePostParams = { postId: string };
 export type BookmarkParams = {
   postId: string;
   isBookmarked: boolean;
 };
 
-export type PostCommentParams ={
-  postId : string,
-  comment : Comment
-}
+export type PostCommentParams = {
+  postId: string;
+  comment: Comment;
+};
 export type PostsInitialState = {
   posts: Post[];
   uploadPostStatus: Status;
@@ -46,6 +47,12 @@ export type PostsInitialState = {
   likePostStatus: Status;
   bookmarkStatus: Status;
   deletePostStatus: Status;
-  postCommentStatus : Status
-
+  postCommentStatus: Status;
+  limit: number;
+  last: QueryDocumentSnapshot<DocumentData> | null;
+  hasMore: boolean;
 };
+export type FetchUserPostReturnType = {
+  posts : Post[];
+  last : QueryDocumentSnapshot<DocumentData> | null;
+}
