@@ -155,6 +155,8 @@ const postsSlice = createSlice({
       state.bookmarkStatus = "idle";
       state.deletePostStatus = "idle";
       state.postCommentStatus = "idle";
+      state.hasMore = true;
+      state.last = null;
     },
   },
   extraReducers: (builder) => {
@@ -179,7 +181,6 @@ const postsSlice = createSlice({
         if (action.payload.posts.length === 0) {
           state.hasMore = false;
         }
-        console.log(state.posts.length);
         state.fetchPostsStatus = "succeded";
       }
     );

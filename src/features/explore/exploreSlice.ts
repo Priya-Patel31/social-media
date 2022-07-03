@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { collection, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  query,
+  startAfter,
+} from "firebase/firestore";
+import { RootState } from "../../app/store";
 import { db } from "../../firebaseApp";
 import { postComment } from "../comments/commentsSlice";
 import {
@@ -14,23 +21,37 @@ import {
   editPost,
   uploadPost,
 } from "../posts/PostsSlice";
-import { exploreInitialState } from "./explore.types";
+import { exploreInitialState, FetchPostReturnType } from "./explore.types";
 
 const initialState: exploreInitialState = {
   posts: [],
   fetchPostsStatus: "idle",
+  limit: 4,
+  last: null,
+  hasMore: true,
 };
 
-export const fetchPosts = createAsyncThunk<Post[]>(
+export const fetchPosts = createAsyncThunk<FetchPostReturnType>(
   "explore/fetchPosts",
-  async () => {
-    const fetchedPosts: Post[] = [];
-    const q = query(collection(db, "posts"));
-    const snapshots = await getDocs(q);
-    snapshots.forEach((post) => {
-      fetchedPosts.push({ ...post.data(), id: post.id } as Post);
+  async (params, { getState }) => {
+    const state = getState() as RootState;
+    const posts: Post[] = [];
+    let q;
+    if (state.explore.last === null) {
+      q = query(collection(db, "posts"), limit(state.explore.limit));
+    } else {
+      q = query(
+        collection(db, "posts"),
+        limit(state.explore.limit),
+        startAfter(state.explore.last)
+      );
+    }
+    const Snap = await getDocs(q);
+    Snap.forEach(async (post) => {
+      posts.push(post.data() as Post);
     });
-    return fetchedPosts as Post[];
+    const last = Snap.docs[Snap.docs.length - 1];
+    return { posts, last };
   }
 );
 
@@ -41,13 +62,19 @@ const exploreSlice = createSlice({
     resetExploreState: (state) => {
       state.posts = [];
       state.fetchPostsStatus = "idle";
+      state.hasMore = true;
+      state.last = null;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(
       fetchPosts.fulfilled,
-      (state, action: PayloadAction<Post[]>) => {
-        state.posts = action.payload;
+      (state, action: PayloadAction<FetchPostReturnType>) => {
+        state.posts = [...state.posts, ...action.payload.posts];
+        state.last = action.payload.last;
+        if (action.payload.posts.length === 0) {
+          state.hasMore = false;
+        }
         state.fetchPostsStatus = "succeded";
       }
     );
