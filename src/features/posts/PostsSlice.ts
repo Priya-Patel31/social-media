@@ -30,6 +30,7 @@ import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
 import { postComment } from "../comments/commentsSlice";
 import { RootState } from "../../app/store";
 
+
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
   async (postData) => {
@@ -103,6 +104,7 @@ export const bookmarkPost = createAsyncThunk<
     await updateDoc(userRef, { bookmarks: arrayUnion(postId) });
   }
   const postRef: any = await getDoc(doc(db, "posts", postId));
+
 
   return {
     post: postRef.data(),
