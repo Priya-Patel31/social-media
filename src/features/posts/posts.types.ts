@@ -51,6 +51,7 @@ export type PostsInitialState = {
   limit: number;
   last: QueryDocumentSnapshot<DocumentData> | null;
   hasMore: boolean;
+
 };
 export type FetchUserPostReturnType = {
   posts : Post[];
