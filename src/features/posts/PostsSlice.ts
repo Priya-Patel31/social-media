@@ -9,6 +9,8 @@ import {
   getDocs,
   arrayRemove,
   deleteDoc,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 import { db } from "../../firebaseApp";
 import { query, where } from "firebase/firestore";
@@ -16,6 +18,7 @@ import {
   ActionPostReturnType,
   BookmarkParams,
   DeletePostParams,
+  FetchUserPostReturnType,
   LikePostParams,
   Post,
   PostCommentParams,
@@ -25,6 +28,8 @@ import { followUser } from "../auth/authSlice";
 import { followUserReturnType } from "../auth/auth.types";
 import { bookmarkPostReturnType } from "../bookmark/bookmark.types";
 import { postComment } from "../comments/commentsSlice";
+import { RootState } from "../../app/store";
+
 
 export const uploadPost = createAsyncThunk<any, Post>(
   "posts/uploadPost",
@@ -39,22 +44,36 @@ export const uploadPost = createAsyncThunk<any, Post>(
   }
 );
 
-export const fetchUserPosts = createAsyncThunk<Post[], string[]>(
-  "posts/fetchUserPost",
-  async (following) => {
-    const posts: Post[] = [];
-    const uid: any = localStorage.getItem("uid");
-    const q = query(
+export const fetchUserPosts = createAsyncThunk<
+  FetchUserPostReturnType,
+  string[]
+>("posts/fetchUserPost", async (following, { getState }) => {
+  const state = getState() as RootState;
+  const posts: Post[] = [];
+  const uid: any = localStorage.getItem("uid");
+  let q;
+  if (state.posts.last === null) {
+    q = query(
       collection(db, "posts"),
-      where("uid", "in", [uid, ...following])
+      where("uid", "in", [uid, ...following]),
+      limit(state.posts.limit)
     );
-    const Snap = await getDocs(q);
-    Snap.forEach(async (post) => {
-      posts.push(post.data() as Post);
-    });
-    return posts;
+  } else {
+    q = query(
+      collection(db, "posts"),
+      where("uid", "in", [uid, ...following]),
+      limit(state.posts.limit),
+      startAfter(state.posts.last)
+    );
   }
-);
+
+  const Snap = await getDocs(q);
+  Snap.forEach(async (post) => {
+    posts.push(post.data() as Post);
+  });
+  const last = Snap.docs[Snap.docs.length - 1];
+  return { posts, last };
+});
 
 export const likePost = createAsyncThunk<ActionPostReturnType, LikePostParams>(
   "posts/likePost",
@@ -84,7 +103,8 @@ export const bookmarkPost = createAsyncThunk<
   } else {
     await updateDoc(userRef, { bookmarks: arrayUnion(postId) });
   }
-  const postRef = await getDoc(doc(db, "posts", postId));
+  const postRef: any = await getDoc(doc(db, "posts", postId));
+
 
   return {
     post: postRef.data(),
@@ -120,6 +140,9 @@ const initialState: PostsInitialState = {
   bookmarkStatus: "idle",
   deletePostStatus: "idle",
   postCommentStatus: "idle",
+  limit: 4,
+  last: null,
+  hasMore: true,
 };
 
 const postsSlice = createSlice({
@@ -134,6 +157,8 @@ const postsSlice = createSlice({
       state.bookmarkStatus = "idle";
       state.deletePostStatus = "idle";
       state.postCommentStatus = "idle";
+      state.hasMore = true;
+      state.last = null;
     },
   },
   extraReducers: (builder) => {
@@ -152,8 +177,12 @@ const postsSlice = createSlice({
     });
     builder.addCase(
       fetchUserPosts.fulfilled,
-      (state, action: PayloadAction<Post[]>) => {
-        state.posts = action.payload;
+      (state, action: PayloadAction<FetchUserPostReturnType>) => {
+        state.posts = [...state.posts, ...action.payload.posts];
+        state.last = action.payload.last;
+        if (action.payload.posts.length === 0) {
+          state.hasMore = false;
+        }
         state.fetchPostsStatus = "succeded";
       }
     );
